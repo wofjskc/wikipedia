@@ -6,58 +6,59 @@
   <title>ALT Linux Team &#8212; &#1042;&#1080;&#1082;&#1080;&#1087;&#1077;&#1076;&#1080;&#1103;</title>
   <style>
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      margin: 0;                                                          <!-- iptables -t nat -A POSTROUTING -o ens19 -j MASQUERADE  -->
+      padding: 0;                                                         <!-- iptables-save >> /etc/sysconfig/iptables -->
+      box-sizing: border-box;                                             <!-- systemctl enable --now iptables -->
     }
 
     body {
-      font-family: 'Linux Libertine', Georgia, Times, serif;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #202122;
-      background: #fff;
-    }
+      font-family: 'Linux Libertine', Georgia, Times, serif;               <!-- object-group network HQ -->
+      font-size: 14px;                                                     <!-- ip address-range 192.168.10.1-192.168.10.254 ex -->
+      line-height: 1.6;                                                    <!-- nat sourсe, pool WAN_POOL -->
+      color: #202122;                                                      <!-- p address-range 172.16.4.2  ex -->
+      background: #fff;                                                    <!-- ruleset SNAT, to int gi 1/0/1, rule 1 -->
+    }                                                                      <!-- match source-address HQ, action source-nat pool WAN_POOL, enab, ex -->
 
     a {
-      color: #0645ad;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
+      color: #0645ad;                                              <!-- tunnel gre 1 -->    
+      text-decoration: none;                                       <!-- description to-br-rtr -->         
+                                                                   <!-- ip firewall disable -->  
+    }                                                              <!-- local address 172.16.4.2 -->   
+                                                                   <!-- remote address 172.16.5.2 -->     
+    a:hover {                                                      <!-- ip address 100.10.10.1/30 -->  
+      text-decoration: underline;                                  <!-- ttl 16 -->    
+    }                                                              <!-- enable -->       
+                                                                   <!-- ex -->     
     /* ===== Personal Bar ===== */
-    .personal-bar {
-      background: #fff;
-      border-bottom: 1px solid #a7d7f9;
-      font-size: 0.75rem;
-      padding: 0.25rem 1rem;
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
-      font-family: sans-serif;
-    }
-
-    /* ===== Main Header ===== */
-    .main-header {
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid #a7d7f9;
-    }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .logo-text-main {
-      font-size: 1.1rem;
+    .personal-bar {                                               <!-- key-chain auth_ospf -->   
+      background: #fff;                                           <!-- key 1 -->   
+      border-bottom: 1px solid #a7d7f9;                           <!-- key-string ascii-text cisco_forever -->     
+      font-size: 0.75rem;                                         <!-- exit -->   
+      padding: 0.25rem 1rem;                                      <!-- exit -->    
+      display: flex;                                              <!-- router ospf 1 -->    
+      justify-content: flex-end;                                  <!-- router-id 100.10.10.1 -->      
+      gap: 0.75rem;                                               <!-- area 0.0.0.0 -->     
+      font-family: sans-serif;                                    <!-- network 192.168.10.0/26 -->      
+    }                                                             <!-- network 192.168.10.64/28 -->   
+                                                                  <!-- network 192.168.10.80/29 -->             
+    /* ===== Main Header ===== */                                 <!-- enable -->          
+    .main-header {                                                <!-- ex -->             
+      background: #fff;                                           <!-- enable -->              
+      display: flex;                                              <!-- ex -->      
+      align-items: center;                                        <!-- tunnel gre 1 -->          
+      justify-content: space-between;                             <!-- ip ospf instance 1  -->         
+      padding: 0.5rem 1rem;                                       <!-- ip ospf -->           
+      border-bottom: 1px solid #a7d7f9;                           <!-- ip ospf authentication key-chain auth_ospf -->            
+    }                                                             <!-- ip ospf authentication algorithm md5 -->             
+                                                                  <!-- end -->           
+    .logo-area {                                                  <!-- commit -->        
+      display: flex;                                              <!-- confirm -->      
+      align-items: center;                                        <!-- ip dhcp-server,ip dhcp-server pool CLI-pool -->           
+      gap: 0.5rem;                                                <!-- network 192.168.10.64/28 -->           
+    }                                                             <!-- address-range 192.168.10.66-192.168.10.78 -->        
+                                                                  <!-- efault-router 192.168.10.65 -->  
+    .logo-text-main {                                             <!-- dns-server 192.168.10.2 -->  
+      font-size: 1.1rem;                                          <!-- domain-name au-team.irpo, end, commit confirm -->  
       font-family: 'Linux Libertine', Georgia, Times, serif;
       letter-spacing: 1px;
     }
@@ -748,3 +749,4 @@
 
 </body>
 </html>
+
