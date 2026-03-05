@@ -1,752 +1,990 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALT Linux Team &#8212; &#1042;&#1080;&#1082;&#1080;&#1087;&#1077;&#1076;&#1080;&#1103;</title>
-  <style>
-    * {
-      margin: 0;                                                          <!-- iptables -t nat -A POSTROUTING -o ens19 -j MASQUERADE  -->
-      padding: 0;                                                         <!-- iptables-save >> /etc/sysconfig/iptables -->
-      box-sizing: border-box;                                             <!-- systemctl enable --now iptables -->
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LWN | Tux Machines</title>
+<style>
+:root {
+  --tm-bg: #f5f5f0;
+  --tm-header-bg: #2e3436;
+  --tm-header-text: #ffffff;
+  --tm-nav-bg: #3c6e3c;
+  --tm-nav-hover: #4a8a4a;
+  --tm-link: #2a5db0;
+  --tm-link-hover: #1a3d70;
+  --tm-sidebar-heading-bg: #3c6e3c;
+  --tm-sidebar-heading-text: #ffffff;
+  --tm-border: #c0c0b0;
+  --tm-content-bg: #ffffff;
+  --tm-text: #333333;
+  --tm-meta: #666666;
+  --tm-footer-bg: #2e3436;
+  --tm-footer-text: #cccccc;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Lucida Grande","Lucida Sans Unicode",Verdana,Arial,sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--tm-text);
+  background: var(--tm-bg);
+}
+a { color: var(--tm-link); text-decoration: none; }
+a:hover { color: var(--tm-link-hover); text-decoration: underline; }
+ul { list-style: none; }
+h1,h2,h3,h4 { font-weight: normal; }
 
-    body {
-      font-family: 'Linux Libertine', Georgia, Times, serif;               <!-- object-group network HQ -->
-      font-size: 14px;                                                     <!-- ip address-range 192.168.10.1-192.168.10.254 ex -->
-      line-height: 1.6;                                                    <!-- nat sourсe, pool WAN_POOL -->
-      color: #202122;                                                      <!-- p address-range 172.16.4.2  ex -->
-      background: #fff;                                                    <!-- ruleset SNAT, to int gi 1/0/1, rule 1 -->
-    }                                                                      <!-- match source-address HQ, action source-nat pool WAN_POOL, enab, ex -->
+/* Header */
+.tm-header {
+  background: var(--tm-header-bg);
+  color: var(--tm-header-text);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+}
+.tm-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tm-header-logo h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 1px;
+}
+.tm-header-logo h1 span { color: #8ae234; }
+.tm-header-slogan {
+  font-size: 12px;
+  color: #babdb6;
+  font-style: italic;
+}
 
-    a {
-      color: #0645ad;                                              <!-- tunnel gre 1 -->    
-      text-decoration: none;                                       <!-- description to-br-rtr -->         
-                                                                   <!-- ip firewall disable -->  
-    }                                                              <!-- local address 172.16.4.2 -->   
-                                                                   <!-- remote address 172.16.5.2 -->     
-    a:hover {                                                      <!-- ip address 100.10.10.1/30 -->  
-      text-decoration: underline;                                  <!-- ttl 16 -->    
-    }                                                              <!-- enable -->       
-                                                                   <!-- ex -->     
-    /* ===== Personal Bar ===== */
-    .personal-bar {                                               <!-- key-chain auth_ospf -->   
-      background: #fff;                                           <!-- key 1 -->   
-      border-bottom: 1px solid #a7d7f9;                           <!-- key-string ascii-text cisco_forever -->     
-      font-size: 0.75rem;                                         <!-- exit -->   
-      padding: 0.25rem 1rem;                                      <!-- exit -->    
-      display: flex;                                              <!-- router ospf 1 -->    
-      justify-content: flex-end;                                  <!-- router-id 100.10.10.1 -->      
-      gap: 0.75rem;                                               <!-- area 0.0.0.0 -->     
-      font-family: sans-serif;                                    <!-- network 192.168.10.0/26 -->      
-    }                                                             <!-- network 192.168.10.64/28 -->   
-                                                                  <!-- network 192.168.10.80/29 -->             
-    /* ===== Main Header ===== */                                 <!-- enable -->          
-    .main-header {                                                <!-- ex -->             
-      background: #fff;                                           <!-- enable -->              
-      display: flex;                                              <!-- ex -->      
-      align-items: center;                                        <!-- tunnel gre 1 -->          
-      justify-content: space-between;                             <!-- ip ospf instance 1  -->         
-      padding: 0.5rem 1rem;                                       <!-- ip ospf -->           
-      border-bottom: 1px solid #a7d7f9;                           <!-- ip ospf authentication key-chain auth_ospf -->            
-    }                                                             <!-- ip ospf authentication algorithm md5 -->             
-                                                                  <!-- end -->           
-    .logo-area {                                                  <!-- commit -->        
-      display: flex;                                              <!-- confirm -->      
-      align-items: center;                                        <!-- ip dhcp-server,ip dhcp-server pool CLI-pool -->           
-      gap: 0.5rem;                                                <!-- network 192.168.10.64/28 -->           
-    }                                                             <!-- address-range 192.168.10.66-192.168.10.78 -->        
-                                                                  <!-- efault-router 192.168.10.65 -->  
-    .logo-text-main {                                             <!-- dns-server 192.168.10.2 -->  
-      font-size: 1.1rem;                                          <!-- domain-name au-team.irpo, end, commit confirm -->  
-      font-family: 'Linux Libertine', Georgia, Times, serif;
-      letter-spacing: 1px;
-    }
+/* Nav */
+.tm-nav {
+  background: var(--tm-nav-bg);
+  border-bottom: 2px solid #2d5a2d;
+}
+.tm-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+.tm-nav li a {
+  display: block;
+  padding: 8px 14px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: none;
+}
+.tm-nav li a:hover {
+  background: var(--tm-nav-hover);
+  color: #fff;
+  text-decoration: none;
+}
 
-    .logo-text-sub {
-      font-size: 0.7rem;
-      color: #54595d;
-      font-family: sans-serif;
-    }
+/* Page Layout */
+.tm-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  padding: 10px 0;
+}
+.tm-sidebar-left {
+  width: 220px;
+  min-width: 220px;
+  padding: 0 8px;
+}
+.tm-content {
+  flex: 1;
+  padding: 0 10px;
+  min-width: 0;
+}
+.tm-sidebar-right {
+  width: 240px;
+  min-width: 240px;
+  padding: 0 8px;
+}
 
-    .search-area {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
+/* Block */
+.tm-block {
+  margin-bottom: 14px;
+  border: 1px solid var(--tm-border);
+  background: var(--tm-content-bg);
+}
+.tm-block h2 {
+  background: var(--tm-sidebar-heading-bg);
+  color: var(--tm-sidebar-heading-text);
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0;
+}
+.tm-block-content {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.tm-block-content ul {
+  list-style: disc;
+  padding-left: 18px;
+}
+.tm-block-content ul li {
+  margin-bottom: 4px;
+}
+.tm-block-content ul li a { font-size: 12px; }
+.read-more {
+  display: block;
+  text-align: right;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--tm-link);
+}
 
-    .search-input {
-      border: 1px solid #a2a9b1;
-      border-radius: 2px;
-      padding: 0.35rem 0.5rem;
-      font-size: 0.8125rem;
-      width: 280px;
-      outline: none;
-      font-family: sans-serif;
-    }
+/* Breadcrumb */
+.tm-breadcrumb {
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--tm-meta);
+  border-bottom: 1px solid var(--tm-border);
+  margin-bottom: 12px;
+}
 
-    .search-input:focus {
-      border-color: #36c;
-      box-shadow: inset 0 0 0 1px #36c;
-    }
+/* Feed header */
+.tm-feed-header { margin-bottom: 16px; }
+.tm-feed-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--tm-text);
+  margin-bottom: 8px;
+}
+.tm-feed-info {
+  background: #f0f0e8;
+  border: 1px solid var(--tm-border);
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.tm-feed-info p { margin-bottom: 4px; }
 
-    .search-btn {
-      background: #f8f9fa;
-      border: 1px solid #a2a9b1;
-      border-radius: 2px;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.8125rem;
-      cursor: pointer;
-      font-family: sans-serif;
-    }
+/* Articles */
+.tm-article {
+  border-bottom: 1px solid #e0e0d8;
+  padding: 12px 0;
+}
+.tm-article:last-child { border-bottom: none; }
+.tm-article h3 {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.tm-article h3 a { color: var(--tm-link); }
+.tm-article-date {
+  font-size: 11px;
+  color: var(--tm-meta);
+  margin-bottom: 6px;
+}
+.tm-article-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--tm-text);
+}
+.tm-article-body p { margin-bottom: 8px; }
 
-    .search-btn:hover {
-      background: #eaecf0;
-    }
+/* Pager */
+.tm-pager {
+  padding: 14px 0;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+}
+.tm-pager a, .tm-pager .current {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid var(--tm-border);
+  background: #fff;
+  color: var(--tm-link);
+  text-decoration: none;
+}
+.tm-pager .current {
+  background: var(--tm-nav-bg);
+  color: #fff;
+  font-weight: bold;
+  border-color: var(--tm-nav-bg);
+}
+.tm-pager a:hover { background: #e8e8e0; text-decoration: none; }
 
-    /* ===== Tabs ===== */
-    .tabs-bar {
-      background: #fff;
-      display: flex;
-      border-bottom: 1px solid #a7d7f9;
-      padding-left: 11rem;
-      font-family: sans-serif;
-    }
+/* Lang */
+.tm-lang-flags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.tm-lang-flag {
+  display: inline-block;
+  width: 20px;
+  height: 14px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 8px;
+  text-align: center;
+  color: #fff;
+  line-height: 14px;
+}
+.tm-lang-select select {
+  width: 100%;
+  font-size: 11px;
+  padding: 2px;
+}
 
-    .tab-item {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.8125rem;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      color: #0645ad;
-    }
+/* Search */
+.tm-search-form input[type="text"] {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid var(--tm-border);
+  margin-bottom: 4px;
+}
+.tm-search-form button {
+  background: var(--tm-nav-bg);
+  color: #fff;
+  border: none;
+  padding: 4px 12px;
+  font-size: 11px;
+  cursor: pointer;
+}
 
-    .tab-item:hover {
-      background: #eaecf0;
-    }
+/* Authors */
+.tm-authors p {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+}
 
-    .tab-item.active {
-      color: #202122;
-      border-bottom-color: #36c;
-    }
+/* Syndication */
+.rss-icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: #f60;
+  border-radius: 2px;
+  vertical-align: middle;
+  text-align: center;
+  color: #fff;
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: bold;
+  margin-right: 4px;
+}
+.tm-syndication p { margin-bottom: 6px; }
+.tm-syndication-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 6px 0;
+}
 
-    .tab-spacer {
-      flex: 1;
-    }
+/* Comments */
+.tm-recent-comments ul { list-style: disc; padding-left: 18px; }
+.tm-recent-comments li { margin-bottom: 4px; font-size: 12px; }
+.comment-age { font-size: 10px; color: var(--tm-meta); display: block; }
 
-    /* ===== Layout ===== */
-    .page-wrapper {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+/* Support */
+.tm-support a { display: block; margin-bottom: 4px; font-weight: bold; }
 
-    .content-wrapper {
-      display: flex;
-      flex: 1;
-    }
+/* Online */
+.tm-online { font-size: 12px; }
 
-    /* ===== Sidebar ===== */
-    .sidebar {
-      width: 10rem;
-      min-width: 10rem;
-      font-size: 0.8125rem;
-      font-family: sans-serif;
-      color: #202122;
-      padding: 0.75rem 0;
-    }
+/* Footer */
+.tm-footer {
+  background: var(--tm-footer-bg);
+  color: var(--tm-footer-text);
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.8;
+  margin-top: 10px;
+}
+.tm-footer a { color: #8ae234; }
+.tm-footer-links { margin-bottom: 8px; }
+.tm-footer-links a { margin: 0 4px; }
+.tm-footer-sister {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+.tm-footer-sister span {
+  display: inline-flex;
+  align-items: center;
+  background: #3a3a3a;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+.tm-footer-powered { margin-top: 6px; }
 
-    .sidebar-section {
-      margin-bottom: 0.5rem;
-    }
+.ed-note { display: block; font-size: 10px; color: #888; font-style: italic; }
 
-    .sidebar-section-title {
-      font-weight: normal;
-      font-size: 0.75rem;
-      color: #54595d;
-      padding: 0.25rem 0.75rem;
-      background: #f8f9fa;
-      border-bottom: 1px solid #c8ccd1;
-      border-top: 1px solid #c8ccd1;
-    }
-
-    .sidebar-links {
-      padding: 0.25rem 0;
-    }
-
-    .sidebar-link {
-      display: block;
-      padding: 0.15rem 0.75rem;
-      font-size: 0.8125rem;
-      line-height: 1.6;
-    }
-
-    /* ===== Article ===== */
-    .article {
-      flex: 1;
-      padding: 1rem 1.5rem;
-      border-left: 1px solid #a7d7f9;
-      max-width: 960px;
-    }
-
-    .article h1 {
-      font-size: 1.8rem;
-      font-weight: normal;
-      border-bottom: 1px solid #a2a9b1;
-      padding-bottom: 0.25rem;
-      margin-bottom: 0.5rem;
-      font-family: 'Linux Libertine', Georgia, Times, serif;
-    }
-
-    .article-subtitle {
-      font-size: 0.75rem;
-      color: #54595d;
-      margin-bottom: 1rem;
-      font-family: sans-serif;
-    }
-
-    .article p {
-      margin-bottom: 0.75rem;
-    }
-
-    .article h2 {
-      font-size: 1.35rem;
-      font-weight: normal;
-      border-bottom: 1px solid #a2a9b1;
-      padding-bottom: 0.2rem;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      font-family: 'Linux Libertine', Georgia, Times, serif;
-    }
-
-    .edit-link {
-      font-size: 0.75rem;
-      font-family: sans-serif;
-      margin-left: 0.5rem;
-      font-weight: normal;
-      color: #54595d;
-    }
-
-    /* ===== Infobox ===== */
-    .infobox {
-      float: right;
-      clear: right;
-      margin: 0 0 1rem 1rem;
-      border: 1px solid #a2a9b1;
-      background: #f8f9fa;
-      border-spacing: 0;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-      width: 22rem;
-      font-family: sans-serif;
-      line-height: 1.5;
-    }
-
-    .infobox-title {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1rem;
-      padding: 0.5rem;
-      background: #eaecf0;
-      border-bottom: 1px solid #a2a9b1;
-      font-family: 'Linux Libertine', Georgia, Times, serif;
-    }
-
-    .infobox-logo {
-      text-align: center;
-      padding: 0.75rem;
-      border-bottom: 1px solid #eaecf0;
-    }
-
-    .infobox-logo-inner {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 115px;
-      height: 80px;
-      background: #fff;
-      border: 1px solid #c8ccd1;
-      border-radius: 2px;
-    }
-
-    .infobox-logo-caption {
-      font-size: 0.75rem;
-      color: #54595d;
-      margin-top: 0.25rem;
-    }
-
-    .infobox th {
-      text-align: left;
-      vertical-align: top;
-      padding: 0.35rem 0.5rem;
-      background: #eaecf0;
-      border-bottom: 1px solid #eaecf0;
-      font-weight: normal;
-      width: 40%;
-      font-size: 0.8125rem;
-    }
-
-    .infobox td {
-      padding: 0.35rem 0.5rem;
-      border-bottom: 1px solid #eaecf0;
-      font-size: 0.8125rem;
-    }
-
-    /* ===== Table of Contents ===== */
-    .toc {
-      display: inline-block;
-      border: 1px solid #a2a9b1;
-      background: #f8f9fa;
-      padding: 0.5rem 1rem;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
-      font-size: 0.8125rem;
-      font-family: sans-serif;
-    }
-
-    .toc-title {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 0.35rem;
-    }
-
-    .toc ol {
-      margin-left: 1.25rem;
-      line-height: 1.8;
-    }
-
-    /* ===== Notes / References ===== */
-    .references {
-      font-size: 0.8125rem;
-      font-family: sans-serif;
-    }
-
-    .references ol {
-      margin-left: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .references li {
-      margin-bottom: 0.25rem;
-    }
-
-    .ref-sup {
-      vertical-align: super;
-      font-size: 0.7rem;
-      color: #0645ad;
-    }
-
-    /* ===== Links list ===== */
-    .links-list {
-      margin-left: 1.5rem;
-      margin-bottom: 0.75rem;
-      list-style-type: disc;
-      font-size: 0.8125rem;
-      font-family: sans-serif;
-    }
-
-    .links-list li {
-      margin-bottom: 0.25rem;
-    }
-
-    .see-also-list {
-      margin-left: 1.5rem;
-      margin-bottom: 0.75rem;
-      list-style-type: disc;
-    }
-
-    /* ===== Categories ===== */
-    .categories {
-      margin-top: 2rem;
-      padding: 0.5rem;
-      border-top: 1px solid #a2a9b1;
-      font-size: 0.8125rem;
-      font-family: sans-serif;
-    }
-
-    .categories-label {
-      color: #54595d;
-    }
-
-    .category-tag {
-      display: inline-block;
-      background: #f8f9fa;
-      border: 1px solid #a2a9b1;
-      border-radius: 2px;
-      padding: 0.1rem 0.35rem;
-      font-size: 0.75rem;
-    }
-
-    /* ===== Footer ===== */
-    .wiki-footer {
-      border-top: 1px solid #a2a9b1;
-      background: #f8f9fa;
-      padding: 0.75rem 1rem;
-      font-size: 0.75rem;
-      font-family: sans-serif;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 0.5rem;
-    }
-
-    .footer-brands {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .footer-license {
-      text-align: center;
-      margin-top: 0.5rem;
-      color: #54595d;
-      font-size: 0.7rem;
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 720px) {
-      .sidebar { display: none; }
-      .tabs-bar { padding-left: 0.5rem; }
-      .infobox { float: none; width: 100%; margin: 0 0 1rem 0; }
-      .search-input { width: 160px; }
-    }
-  </style>
+@media (max-width: 960px) {
+  .tm-page { flex-direction: column; }
+  .tm-sidebar-left, .tm-sidebar-right { width: 100%; min-width: unset; }
+}
+</style>
 </head>
 <body>
 
-<div class="page-wrapper">
-
-  <!-- ===== HEADER ===== -->
-  <header>
-    <!-- Personal bar -->
-    <div class="personal-bar">
-      <a href="#">&#1057;&#1086;&#1079;&#1076;&#1072;&#1090;&#1100; &#1091;&#1095;&#1105;&#1090;&#1085;&#1091;&#1102; &#1079;&#1072;&#1087;&#1080;&#1089;&#1100;</a>
-      <a href="#">&#1042;&#1086;&#1081;&#1090;&#1080;</a>
+<!-- ======== HEADER ======== -->
+<header class="tm-header">
+  <div class="tm-header-logo">
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+      <circle cx="30" cy="30" r="28" fill="#2e3436" stroke="#8ae234" stroke-width="2"/>
+      <ellipse cx="30" cy="32" rx="16" ry="18" fill="#f5f5dc"/>
+      <ellipse cx="30" cy="30" rx="12" ry="14" fill="#333"/>
+      <ellipse cx="30" cy="44" rx="10" ry="5" fill="#f4a300"/>
+      <circle cx="25" cy="26" r="3" fill="#fff"/>
+      <circle cx="35" cy="26" r="3" fill="#fff"/>
+      <circle cx="25" cy="26" r="1.5" fill="#000"/>
+      <circle cx="35" cy="26" r="1.5" fill="#000"/>
+      <ellipse cx="30" cy="32" rx="4" ry="2" fill="#f4a300"/>
+    </svg>
+    <div>
+      <h1><span>Tux</span> Machines</h1>
+      <div class="tm-header-slogan">Do you waddle the waddle?</div>
     </div>
+  </div>
+</header>
 
-    <!-- Main header -->
-    <div class="main-header">
-      <div class="logo-area">
-        <!-- Wikipedia Globe SVG -->
-        <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="25" cy="25" r="24" stroke="#000" stroke-width="0.5" fill="none"/>
-          <g transform="translate(13, 10)">
-            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm0 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z" fill="none" stroke="#ccc" stroke-width="0.3"/>
-          </g>
-          <text x="25" y="36" text-anchor="middle" style="font-size:5px;font-family:serif;fill:#000;">WIKIPEDIA</text>
-        </svg>
-        <div>
-          <div class="logo-text-main">&#1042;&#1080;&#1082;&#1080;&#1087;&#1077;&#1076;&#1080;&#1103;</div>
-          <div class="logo-text-sub">&#1057;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1072;&#1103; &#1101;&#1085;&#1094;&#1080;&#1082;&#1083;&#1086;&#1087;&#1077;&#1076;&#1080;&#1103;</div>
-        </div>
-      </div>
-      <div class="search-area">
-        <input type="text" class="search-input" placeholder="&#1055;&#1086;&#1080;&#1089;&#1082; &#1074; &#1042;&#1080;&#1082;&#1080;&#1087;&#1077;&#1076;&#1080;&#1080;">
-        <button class="search-btn">&#1053;&#1072;&#1081;&#1090;&#1080;</button>
-      </div>
-    </div>
+<!-- ======== NAV ======== -->
+<nav class="tm-nav">
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Gallery</a></li>
+    <li><a href="#">Forum</a></li>
+    <li><a href="#">Blogs</a></li>
+    <li><a href="#">IRC</a></li>
+    <li><a href="#">Search</a></li>
+    <li><a href="#">News</a></li>
+    <li><a href="#">RSS Feed</a></li>
+  </ul>
+</nav>
 
-    <!-- Tabs -->
-    <div class="tabs-bar">
-      <div class="tab-item active">&#1057;&#1090;&#1072;&#1090;&#1100;&#1103;</div>
-      <div class="tab-item">&#1054;&#1073;&#1089;&#1091;&#1078;&#1076;&#1077;&#1085;&#1080;&#1077;</div>
-      <div class="tab-spacer"></div>
-      <div class="tab-item active">&#1063;&#1080;&#1090;&#1072;&#1090;&#1100;</div>
-      <div class="tab-item">&#1055;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100;</div>
-      <div class="tab-item">&#1055;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; &#1082;&#1086;&#1076;</div>
-      <div class="tab-item">&#1048;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</div>
-    </div>
-  </header>
+<!-- ======== MAIN LAYOUT ======== -->
+<div class="tm-page">
 
-  <!-- ===== CONTENT ===== -->
-  <div class="content-wrapper">
+<!-- ======== LEFT SIDEBAR ======== -->
+<aside class="tm-sidebar-left">
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-links">
-          <a href="#" class="sidebar-link">&#1047;&#1072;&#1075;&#1083;&#1072;&#1074;&#1085;&#1072;&#1103; &#1089;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1072;</a>
-          <a href="#" class="sidebar-link">&#1056;&#1091;&#1073;&#1088;&#1080;&#1082;&#1072;&#1094;&#1080;&#1103;</a>
-          <a href="#" class="sidebar-link">&#1059;&#1082;&#1072;&#1079;&#1072;&#1090;&#1077;&#1083;&#1100; &#1040; &#8212; &#1071;</a>
-          <a href="#" class="sidebar-link">&#1048;&#1079;&#1073;&#1088;&#1072;&#1085;&#1085;&#1099;&#1077; &#1089;&#1090;&#1072;&#1090;&#1100;&#1080;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1083;&#1091;&#1095;&#1072;&#1081;&#1085;&#1072;&#1103; &#1089;&#1090;&#1072;&#1090;&#1100;&#1103;</a>
-          <a href="#" class="sidebar-link">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1089;&#1086;&#1073;&#1099;&#1090;&#1080;&#1103;</a>
-          <a href="#" class="sidebar-link">&#1055;&#1086;&#1078;&#1077;&#1088;&#1090;&#1074;&#1086;&#1074;&#1072;&#1090;&#1100;</a>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">&#1059;&#1095;&#1072;&#1089;&#1090;&#1080;&#1077;</div>
-        <div class="sidebar-links">
-          <a href="#" class="sidebar-link">&#1057;&#1086;&#1086;&#1073;&#1097;&#1080;&#1090;&#1100; &#1086;&#1073; &#1086;&#1096;&#1080;&#1073;&#1082;&#1077;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1086;</a>
-          <a href="#" class="sidebar-link">&#1060;&#1086;&#1088;&#1091;&#1084;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1074;&#1077;&#1078;&#1080;&#1077; &#1087;&#1088;&#1072;&#1074;&#1082;&#1080;</a>
-          <a href="#" class="sidebar-link">&#1053;&#1086;&#1074;&#1099;&#1077; &#1089;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1099;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1087;&#1088;&#1072;&#1074;&#1082;&#1072;</a>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">&#1048;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099;</div>
-        <div class="sidebar-links">
-          <a href="#" class="sidebar-link">&#1057;&#1089;&#1099;&#1083;&#1082;&#1080; &#1089;&#1102;&#1076;&#1072;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1074;&#1103;&#1079;&#1072;&#1085;&#1085;&#1099;&#1077; &#1087;&#1088;&#1072;&#1074;&#1082;&#1080;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1083;&#1091;&#1078;&#1077;&#1073;&#1085;&#1099;&#1077; &#1089;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1099;</a>
-          <a href="#" class="sidebar-link">&#1055;&#1086;&#1089;&#1090;&#1086;&#1103;&#1085;&#1085;&#1072;&#1103; &#1089;&#1089;&#1099;&#1083;&#1082;&#1072;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1074;&#1077;&#1076;&#1077;&#1085;&#1080;&#1103; &#1086; &#1089;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1077;</a>
-          <a href="#" class="sidebar-link">&#1062;&#1080;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100; &#1089;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1091;</a>
-          <a href="#" class="sidebar-link">&#1055;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; &#1082;&#1086;&#1088;&#1086;&#1090;&#1082;&#1080;&#1081; URL</a>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">&#1055;&#1077;&#1095;&#1072;&#1090;&#1100;/&#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;</div>
-        <div class="sidebar-links">
-          <a href="#" class="sidebar-link">&#1057;&#1086;&#1079;&#1076;&#1072;&#1090;&#1100; &#1082;&#1085;&#1080;&#1075;&#1091;</a>
-          <a href="#" class="sidebar-link">&#1057;&#1082;&#1072;&#1095;&#1072;&#1090;&#1100; &#1082;&#1072;&#1082; PDF</a>
-          <a href="#" class="sidebar-link">&#1042;&#1077;&#1088;&#1089;&#1080;&#1103; &#1076;&#1083;&#1103; &#1087;&#1077;&#1095;&#1072;&#1090;&#1080;</a>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">&#1042; &#1076;&#1088;&#1091;&#1075;&#1080;&#1093; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1072;&#1093;</div>
-        <div class="sidebar-links">
-          <a href="#" class="sidebar-link">&#1042;&#1080;&#1082;&#1080;&#1089;&#1082;&#1083;&#1072;&#1076;</a>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">&#1053;&#1072; &#1076;&#1088;&#1091;&#1075;&#1080;&#1093; &#1103;&#1079;&#1099;&#1082;&#1072;&#1093;</div>
-        <div class="sidebar-links">
-          <a href="#" class="sidebar-link">English</a>
-          <a href="#" class="sidebar-link">Deutsch</a>
-          <a href="#" class="sidebar-link">Italiano</a>
-          <a href="#" class="sidebar-link">Polski</a>
-          <a href="#" class="sidebar-link">&#1045;&#1097;&#1105; 9</a>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Article -->
-    <article class="article">
-      <h1>ALT Linux Team</h1>
-      <div class="article-subtitle">&#1052;&#1072;&#1090;&#1077;&#1088;&#1080;&#1072;&#1083; &#1080;&#1079; &#1042;&#1080;&#1082;&#1080;&#1087;&#1077;&#1076;&#1080;&#1080; &#8212; &#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1086;&#1081; &#1101;&#1085;&#1094;&#1080;&#1082;&#1083;&#1086;&#1087;&#1077;&#1076;&#1080;&#1080;</div>
-
-      <!-- Infobox -->
-      <table class="infobox">
-        <tbody>
-          <tr>
-            <td colspan="2" class="infobox-title">ALT Linux</td>
-          </tr>
-          <tr>
-            <td colspan="2" class="infobox-logo">
-              <div class="infobox-logo-inner">
-                <svg width="80" height="50" viewBox="0 0 80 50" fill="none">
-                  <rect width="80" height="50" rx="4" fill="#fff"/>
-                  <text x="40" y="20" text-anchor="middle" style="font-size:10px;fill:#c00;font-weight:bold;font-family:sans-serif;">ALT</text>
-                  <text x="40" y="35" text-anchor="middle" style="font-size:8px;fill:#333;font-family:sans-serif;">Linux</text>
-                </svg>
-              </div>
-              <div class="infobox-logo-caption">&#1051;&#1086;&#1075;&#1086;&#1090;&#1080;&#1087;</div>
-            </td>
-          </tr>
-          <tr>
-            <th>&#1058;&#1080;&#1087; &#1086;&#1088;&#1075;&#1072;&#1085;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080;</th>
-            <td>&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1086; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1086;&#1074;</td>
-          </tr>
-          <tr>
-            <th>&#1054;&#1089;&#1085;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</th>
-            <td>2001</td>
-          </tr>
-          <tr>
-            <th>&#1056;&#1072;&#1089;&#1087;&#1086;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;</th>
-            <td>&#1056;&#1086;&#1089;&#1089;&#1080;&#1103;, &#1041;&#1077;&#1083;&#1086;&#1088;&#1091;&#1089;&#1089;&#1080;&#1103;, &#1059;&#1082;&#1088;&#1072;&#1080;&#1085;&#1072;, &#1050;&#1072;&#1079;&#1072;&#1093;&#1089;&#1090;&#1072;&#1085;, &#1056;&#1091;&#1084;&#1099;&#1085;&#1080;&#1103;, &#1041;&#1088;&#1072;&#1079;&#1080;&#1083;&#1080;&#1103;</td>
-          </tr>
-          <tr>
-            <th>&#1054;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1087;&#1088;&#1086;&#1076;&#1091;&#1082;&#1090;</th>
-            <td><a href="#">&#1057;&#1080;&#1079;&#1080;&#1092;</a> (&#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1081;)</td>
-          </tr>
-          <tr>
-            <th>&#1059;&#1095;&#1072;&#1089;&#1090;&#1085;&#1080;&#1082;&#1086;&#1074;</th>
-            <td>~250 (&#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1086;&#1074;)</td>
-          </tr>
-          <tr>
-            <th>&#1057;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1095;&#1072;&#1077;&#1090; &#1089;</th>
-            <td><a href="#">&#1041;&#1072;&#1079;&#1072;&#1083;&#1100;&#1090; &#1057;&#1055;&#1054;</a></td>
-          </tr>
-          <tr>
-            <th>&#1057;&#1072;&#1081;&#1090;</th>
-            <td><a href="https://www.altlinux.org" target="_blank" rel="noopener noreferrer">altlinux.org</a></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Intro -->
-      <p>
-        <b>ALT Linux Team</b> (ALT &#8212; <a href="#">&#1088;&#1077;&#1082;&#1091;&#1088;&#1089;&#1080;&#1074;&#1085;&#1072;&#1103; &#1072;&#1073;&#1073;&#1088;&#1077;&#1074;&#1080;&#1072;&#1090;&#1091;&#1088;&#1072;</a>, &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072; ALT Linux) &#8212; &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1086;,
-        &#1086;&#1073;&#1098;&#1077;&#1076;&#1080;&#1085;&#1103;&#1102;&#1097;&#1077;&#1077; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1086;&#1074; <a href="#">&#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1086;&#1075;&#1086; &#1087;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1085;&#1086;&#1075;&#1086; &#1086;&#1073;&#1077;&#1089;&#1087;&#1077;&#1095;&#1077;&#1085;&#1080;&#1103;</a>, &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1102;&#1097;&#1080;&#1093; &#1085;&#1072;&#1076; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1072;&#1084;&#1080;,
-        &#1089;&#1074;&#1103;&#1079;&#1072;&#1085;&#1085;&#1099;&#1084;&#1080; &#1089; &#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1077;&#1084; <a href="#">&#1057;&#1080;&#1079;&#1080;&#1092;</a> &#1080; <a href="#">&#1076;&#1080;&#1089;&#1090;&#1088;&#1080;&#1073;&#1091;&#1090;&#1080;&#1074;&#1072;&#1084;&#1080; ALT Linux</a>.
-      </p>
-
-      <p>
-        &#1042; &#1085;&#1077;&#1075;&#1086; &#1074;&#1093;&#1086;&#1076;&#1103;&#1090; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1080; &#1080;&#1079; <a href="#">&#1056;&#1086;&#1089;&#1089;&#1080;&#1080;</a>, <a href="#">&#1041;&#1077;&#1083;&#1086;&#1088;&#1091;&#1089;&#1089;&#1080;&#1080;</a>,
-        <a href="#">&#1059;&#1082;&#1088;&#1072;&#1080;&#1085;&#1099;</a>, <a href="#">&#1050;&#1072;&#1079;&#1072;&#1093;&#1089;&#1090;&#1072;&#1085;&#1072;</a>, <a href="#">&#1056;&#1091;&#1084;&#1099;&#1085;&#1080;&#1080;</a> &#1080;
-        <a href="#">&#1041;&#1088;&#1072;&#1079;&#1080;&#1083;&#1080;&#1080;</a>. &#1050;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072; ALT, &#1079;&#1072;&#1085;&#1080;&#1084;&#1072;&#1102;&#1097;&#1072;&#1103;&#1089;&#1103; &#1089;&#1073;&#1086;&#1088;&#1082;&#1086;&#1081; &#1080; &#1087;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1082;&#1086;&#1081; &#1087;&#1072;&#1082;&#1077;&#1090;&#1086;&#1074; &#1074; &#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1080;,
-        &#1085;&#1072;&#1089;&#1095;&#1080;&#1090;&#1099;&#1074;&#1072;&#1077;&#1090; &#1086;&#1082;&#1086;&#1083;&#1086; 250 &#1095;&#1077;&#1083;&#1086;&#1074;&#1077;&#1082;. &#1057;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1086; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1077;&#1081; &#8212; &#1073;&#1086;&#1083;&#1077;&#1077; &#1090;&#1099;&#1089;&#1103;&#1095;&#1080; &#1095;&#1077;&#1083;&#1086;&#1074;&#1077;&#1082; &#1074; &#1090;&#1077;&#1083;&#1077;&#1075;&#1088;&#1072;&#1084;-&#1082;&#1072;&#1085;&#1072;&#1083;&#1077;,
-        &#1073;&#1086;&#1083;&#1077;&#1077; 15 &#1090;&#1099;&#1089;&#1103;&#1095; &#1079;&#1072;&#1088;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1074;&#1096;&#1080;&#1093;&#1089;&#1103; &#1085;&#1072; &#1092;&#1086;&#1088;&#1091;&#1084;&#1077;. &#1050;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072; &#1090;&#1077;&#1089;&#1085;&#1086; &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1095;&#1072;&#1077;&#1090; &#1089; &#1088;&#1086;&#1089;&#1089;&#1080;&#1081;&#1089;&#1082;&#1086;&#1081; &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1077;&#1081;
-        <a href="#">&#171;&#1041;&#1072;&#1079;&#1072;&#1083;&#1100;&#1090; &#1057;&#1055;&#1054;&#187;</a> (&#1088;&#1072;&#1085;&#1077;&#1077; &#8212; <a href="#">&#171;&#1040;&#1083;&#1100;&#1090; &#1051;&#1080;&#1085;&#1091;&#1082;&#1089;&#187;</a>).
-      </p>
-
-      <!-- Table of Contents -->
-      <div class="toc">
-        <div class="toc-title">&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</div>
-        <ol>
-          <li><a href="#development">&#1056;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1082;&#1072;</a></li>
-          <li><a href="#history">&#1048;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;</a></li>
-          <li><a href="#see-also">&#1057;&#1084;. &#1090;&#1072;&#1082;&#1078;&#1077;</a></li>
-          <li><a href="#notes">&#1055;&#1088;&#1080;&#1084;&#1077;&#1095;&#1072;&#1085;&#1080;&#1103;</a></li>
-          <li><a href="#links">&#1057;&#1089;&#1099;&#1083;&#1082;&#1080;</a></li>
-        </ol>
-      </div>
-
-      <!-- Section 1: Разработка -->
-      <h2 id="development">
-        &#1056;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1082;&#1072;
-        <span class="edit-link"><a href="#">[&#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; | &#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; &#1082;&#1086;&#1076;]</a></span>
-      </h2>
-
-      <p>
-        &#1054;&#1089;&#1085;&#1086;&#1074;&#1085;&#1099;&#1084; &#1086;&#1073;&#1098;&#1077;&#1082;&#1090;&#1086;&#1084; &#1080; &#1086;&#1076;&#1085;&#1086;&#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1085;&#1086; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1086;&#1084; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1082;&#1080; &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1072; &#1103;&#1074;&#1083;&#1103;&#1077;&#1090;&#1089;&#1103; &#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1081; &#1087;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1085;&#1099;&#1093; &#1087;&#1088;&#1086;&#1076;&#1091;&#1082;&#1090;&#1086;&#1074;
-        <a href="#">&#1057;&#1080;&#1079;&#1080;&#1092;</a> &#8212; &#1082;&#1072;&#1082; &#1089;&#1072;&#1084;&#1086; &#1093;&#1088;&#1072;&#1085;&#1080;&#1083;&#1080;&#1097;&#1077;, &#1090;&#1072;&#1082; &#1080; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072; &#1089;&#1073;&#1086;&#1088;&#1082;&#1080;, &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1080; &#1082;&#1072;&#1095;&#1077;&#1089;&#1090;&#1074;&#1072; &#1080; &#1087;&#1091;&#1073;&#1083;&#1080;&#1082;&#1072;&#1094;&#1080;&#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1086;&#1074;
-        (&#1090;.&nbsp;&#1085;. <a href="#">&#171;&#1089;&#1073;&#1086;&#1088;&#1086;&#1095;&#1085;&#1080;&#1094;&#1072;&#187;</a>). &#1042;&#1089;&#1077; &#1089;&#1086;&#1073;&#1089;&#1090;&#1074;&#1077;&#1085;&#1085;&#1099;&#1077; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1082;&#1080; &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1072; &#1080; &#1084;&#1085;&#1086;&#1075;&#1080;&#1077; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1077; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1099;
-        &#1091;&#1095;&#1072;&#1089;&#1090;&#1085;&#1080;&#1082;&#1086;&#1074; ALT &#1090;&#1072;&#1082;&#1078;&#1077; <a href="#">&#1074;&#1077;&#1076;&#1091;&#1090;&#1089;&#1103; &#1074; &#1088;&#1072;&#1084;&#1082;&#1072;&#1093; &#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1103;</a> &#1080; &#1089;&#1073;&#1086;&#1088;&#1086;&#1095;&#1085;&#1080;&#1094;&#1099;, &#1090;.&nbsp;&#1082;. &#1101;&#1090;&#1086; &#1087;&#1086;&#1079;&#1074;&#1086;&#1083;&#1103;&#1077;&#1090;
-        &#1074;&#1086;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1100;&#1089;&#1103; &#1077;&#1105; &#1090;&#1077;&#1093;&#1085;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1084;&#1080; &#1087;&#1088;&#1077;&#1080;&#1084;&#1091;&#1097;&#1077;&#1089;&#1090;&#1074;&#1072;&#1084;&#1080; &#1080; &#1087;&#1086;&#1084;&#1077;&#1089;&#1090;&#1080;&#1090;&#1100; &#1087;&#1072;&#1082;&#1077;&#1090; &#1074; &#1076;&#1080;&#1089;&#1090;&#1088;&#1080;&#1073;&#1091;&#1090;&#1080;&#1074;.
-      </p>
-
-      <p>
-        &#1053;&#1072; &#1086;&#1089;&#1085;&#1086;&#1074;&#1077; <a href="#">&#1057;&#1080;&#1079;&#1080;&#1092;&#1072;</a> &#1074;&#1099;&#1087;&#1091;&#1089;&#1082;&#1072;&#1102;&#1090;&#1089;&#1103; &#1090;.&nbsp;&#1085;. <a href="#">&#171;&#1088;&#1077;&#1075;&#1091;&#1083;&#1103;&#1088;&#1085;&#1099;&#1077; &#1089;&#1073;&#1086;&#1088;&#1082;&#1080;&#187;</a> &#8212; &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1086;&#1095;&#1085;&#1099;&#1077;
-        &#1086;&#1073;&#1088;&#1072;&#1079;&#1099; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1099; &#1074; &#1088;&#1072;&#1079;&#1083;&#1080;&#1095;&#1085;&#1099;&#1093; &#1082;&#1086;&#1085;&#1092;&#1080;&#1075;&#1091;&#1088;&#1072;&#1094;&#1080;&#1103;&#1093; (&#1086;&#1090; &#171;&#1087;&#1091;&#1089;&#1090;&#1086;&#1081; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1099;&#187; &#1080; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1086;&#1073;&#1088;&#1072;&#1079;&#1072; &#1076;&#1086; &#1089;&#1077;&#1088;&#1074;&#1077;&#1088;&#1072; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1082;&#1080; &#1080;
-        &#1074;&#1089;&#1077;&#1074;&#1086;&#1079;&#1084;&#1086;&#1078;&#1085;&#1099;&#1093; &#1076;&#1077;&#1089;&#1082;&#1090;&#1086;&#1087;-&#1086;&#1082;&#1088;&#1091;&#1078;&#1077;&#1085;&#1080;&#1081;), &#1076;&#1083;&#1103; &#1085;&#1077;&#1089;&#1082;&#1086;&#1083;&#1100;&#1082;&#1080;&#1093; &#1072;&#1087;&#1087;&#1072;&#1088;&#1072;&#1090;&#1085;&#1099;&#1093; &#1072;&#1088;&#1093;&#1080;&#1090;&#1077;&#1082;&#1090;&#1091;&#1088; (&#1085;&#1072; &#1074;&#1088;&#1077;&#1084;&#1103; &#1087;&#1088;&#1072;&#1074;&#1082;&#1080; &#8212; 15 &#1074;&#1072;&#1088;&#1080;&#1072;&#1085;&#1090;&#1086;&#1074;
-        &#1082;&#1086;&#1085;&#1092;&#1080;&#1075;&#1091;&#1088;&#1072;&#1094;&#1080;&#1081;, &#1085;&#1077;&#1082;&#1086;&#1090;&#1086;&#1088;&#1099;&#1077; &#1080;&#1079; &#1085;&#1080;&#1093; &#8212; &#1076;&#1083;&#1103; &#1087;&#1103;&#1090;&#1080; &#1072;&#1088;&#1093;&#1080;&#1090;&#1077;&#1082;&#1090;&#1091;&#1088;: i586, x86_64, aarch64, armh &#1080; mipsel). &#1053;&#1072; &#1086;&#1089;&#1085;&#1086;&#1074;&#1077; &#1087;&#1086;&#1089;&#1083;&#1077;&#1076;&#1085;&#1077;&#1081;
-        &#1089;&#1090;&#1072;&#1073;&#1080;&#1083;&#1100;&#1085;&#1086;&#1081; &#1074;&#1077;&#1090;&#1082;&#1080; &#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1103; (&#171;&#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099;&#187;) &#1074;&#1099;&#1087;&#1091;&#1089;&#1082;&#1072;&#1102;&#1090;&#1089;&#1103; &#1072;&#1085;&#1072;&#1083;&#1086;&#1075;&#1080;&#1095;&#1085;&#1099;&#1077; &#1087;&#1086; &#1089;&#1074;&#1086;&#1081;&#1089;&#1090;&#1074;&#1072;&#1084; &#1089;&#1073;&#1086;&#1088;&#1082;&#1080; &#8212;
-        <a href="#">&#171;&#1089;&#1090;&#1072;&#1088;&#1090;&#1086;&#1074;&#1099;&#1077; &#1085;&#1072;&#1073;&#1086;&#1088;&#1099;&#187;</a>. &#171;&#1056;&#1077;&#1075;&#1091;&#1083;&#1103;&#1088;&#1082;&#1080;&#187; &#1080; &#171;&#1089;&#1090;&#1072;&#1088;&#1090;&#1077;&#1088;&#1082;&#1080;&#1090;&#1099;&#187; &#1074;&#1099;&#1093;&#1086;&#1076;&#1103;&#1090; &#1074; &#1087;&#1086;&#1083;&#1091;&#1072;&#1074;&#1090;&#1086;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1086;&#1084; &#1088;&#1077;&#1078;&#1080;&#1084;&#1077;,
-        &#1087;&#1088;&#1077;&#1076;&#1085;&#1072;&#1079;&#1085;&#1072;&#1095;&#1077;&#1085;&#1099; &#1076;&#1083;&#1103; &#1086;&#1079;&#1085;&#1072;&#1082;&#1086;&#1084;&#1083;&#1077;&#1085;&#1080;&#1103;, &#1089;&#1074;&#1086;&#1077;&#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1085;&#1086;&#1075;&#1086; &#1090;&#1077;&#1089;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1088;&#1086;&#1094;&#1077;&#1076;&#1091;&#1088;&#1099; &#1089;&#1073;&#1086;&#1088;&#1082;&#1080; &#1076;&#1080;&#1089;&#1090;&#1088;&#1080;&#1073;&#1091;&#1090;&#1080;&#1074;&#1086;&#1074; &#1080; &#8212; &#1087;&#1088;&#1080; &#1085;&#1072;&#1076;&#1083;&#1077;&#1078;&#1072;&#1097;&#1077;&#1084;
-        &#1086;&#1087;&#1099;&#1090;&#1077; &#8212; &#1088;&#1072;&#1079;&#1074;&#1105;&#1088;&#1090;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1086;&#1087;&#1077;&#1088;&#1072;&#1094;&#1080;&#1086;&#1085;&#1085;&#1099;&#1093; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;. &#1055;&#1086;&#1083;&#1085;&#1086;&#1094;&#1077;&#1085;&#1085;&#1099;&#1084;&#1080; &#1076;&#1080;&#1089;&#1090;&#1088;&#1080;&#1073;&#1091;&#1090;&#1080;&#1074;&#1072;&#1084;&#1080; &#1086;&#1085;&#1080; &#1085;&#1077; &#1103;&#1074;&#1083;&#1103;&#1102;&#1090;&#1089;&#1103;. &#1053;&#1072; &#1073;&#1072;&#1079;&#1077; &#1090;&#1086;&#1081; &#1078;&#1077; &#1087;&#1086;&#1089;&#1083;&#1077;&#1076;&#1085;&#1077;&#1081;
-        &#1089;&#1090;&#1072;&#1073;&#1080;&#1083;&#1100;&#1085;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1099; &#1074;&#1099;&#1087;&#1091;&#1089;&#1082;&#1072;&#1077;&#1090; &#1089;&#1074;&#1086;&#1080; &#1076;&#1080;&#1089;&#1090;&#1088;&#1080;&#1073;&#1091;&#1090;&#1080;&#1074;&#1099; &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1103; &#171;&#1041;&#1072;&#1079;&#1072;&#1083;&#1100;&#1090; &#1057;&#1055;&#1054;&#187;.
-      </p>
-
-      <p>
-        &#1057;&#1086;&#1073;&#1089;&#1090;&#1074;&#1077;&#1085;&#1085;&#1099;&#1077; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1082;&#1080; ALT Linux Team &#1088;&#1072;&#1089;&#1087;&#1088;&#1086;&#1089;&#1090;&#1088;&#1072;&#1085;&#1103;&#1102;&#1090;&#1089;&#1103; &#1087;&#1086;&#1076; <a href="#">&#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1099;&#1084;&#1080; &#1083;&#1080;&#1094;&#1077;&#1085;&#1079;&#1080;&#1103;&#1084;&#1080;</a>. &#1057;&#1088;&#1077;&#1076;&#1080; &#1077;&#1075;&#1086;
-        &#1091;&#1095;&#1072;&#1089;&#1090;&#1085;&#1080;&#1082;&#1086;&#1074; &#1077;&#1089;&#1090;&#1100; &#1080; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1080; &#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1099;&#1093; &#1082;&#1086;&#1084;&#1087;&#1086;&#1085;&#1077;&#1085;&#1090;&#1086;&#1074; <a href="#">Linux</a>.
-      </p>
-
-      <!-- Section 2: История -->
-      <h2 id="history">
-        &#1048;&#1089;&#1090;&#1086;&#1088;&#1080;&#1103;
-        <span class="edit-link"><a href="#">[&#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; | &#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; &#1082;&#1086;&#1076;]</a></span>
-      </h2>
-
-      <p>
-        &#1057;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1086; ALT Linux Team &#1086;&#1073;&#1088;&#1072;&#1079;&#1086;&#1074;&#1072;&#1083;&#1086;&#1089;&#1100; &#1074; <a href="#">&#1052;&#1086;&#1089;&#1082;&#1074;&#1077;</a>, &#1074; <a href="#">2001</a> &#1075;&#1086;&#1076;&#1091; &#1080;&#1079; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;&#1072;
-        IPLabs Linux Team. &#1055;&#1086;&#1084;&#1080;&#1084;&#1086; &#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1079;&#1072;&#1076;&#1072;&#1095;&#1080; &#8212; &#1088;&#1072;&#1079;&#1074;&#1080;&#1090;&#1080;&#1103; &#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1103; &#8212; ALT, &#1090;&#1077;&#1089;&#1085;&#1086; &#1074;&#1079;&#1072;&#1080;&#1084;&#1086;&#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1091;&#1103; &#1080; &#1074; &#1080;&#1079;&#1074;&#1077;&#1089;&#1090;&#1085;&#1086;&#1081; &#1089;&#1090;&#1077;&#1087;&#1077;&#1085;&#1080;
-        &#1087;&#1077;&#1088;&#1077;&#1089;&#1077;&#1082;&#1072;&#1103;&#1089;&#1100; &#1089; &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1086;&#1084; &#1074;&#1086;&#1082;&#1088;&#1091;&#1075; &#1089;&#1072;&#1081;&#1090;&#1072; <a href="#">Linux.Ru.Net</a>
-        <a href="#">(&#1072;&#1088;&#1093;&#1080;&#1074;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086; 2010 &#1075;.)</a>, &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1072; &#1079;&#1072;&#1085;&#1080;&#1084;&#1072;&#1083;&#1072;&#1089;&#1100; &#1087;&#1086;&#1087;&#1091;&#1083;&#1103;&#1088;&#1080;&#1079;&#1072;&#1094;&#1080;&#1077;&#1081; Linux,
-        <a href="#">&#1082;&#1088;&#1086;&#1089;&#1089;&#1087;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1077;&#1085;&#1085;&#1086;&#1075;&#1086;</a> &#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1086;&#1075;&#1086; &#1055;&#1054;, &#1080; <a href="#">&#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1086;&#1075;&#1086; &#1083;&#1080;&#1094;&#1077;&#1085;&#1079;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1103;</a> &#1074; &#1094;&#1077;&#1083;&#1086;&#1084;.
-        &#1042;&#1099;&#1087;&#1091;&#1089;&#1082;&#1072;&#1083;&#1080;&#1089;&#1100; &#1089;&#1073;&#1086;&#1088;&#1085;&#1080;&#1082;&#1080; &#1089;&#1086; &#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1086; &#1088;&#1072;&#1089;&#1087;&#1088;&#1086;&#1089;&#1090;&#1088;&#1072;&#1085;&#1103;&#1077;&#1084;&#1086;&#1081; &#1084;&#1091;&#1079;&#1099;&#1082;&#1086;&#1081;, &#1087;&#1088;&#1086;&#1074;&#1086;&#1076;&#1080;&#1083;&#1089;&#1103; &#1087;&#1086;&#1076;&#1084;&#1086;&#1089;&#1082;&#1086;&#1074;&#1085;&#1099;&#1081; &#1089;&#1083;&#1105;&#1090;
-        <a href="#">LinuxFest</a>, &#1074;&#1099;&#1087;&#1091;&#1089;&#1082;&#1072;&#1083;&#1089;&#1103; &#171;&#1082;&#1086;&#1088;&#1086;&#1073;&#1086;&#1095;&#1085;&#1099;&#1081;&#187; &#1089;&#1073;&#1086;&#1088;&#1085;&#1080;&#1082; &#1087;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084; &#1076;&#1083;&#1103; Windows
-        &#171;<a href="#">&#1057;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1099;&#1081; &#1086;&#1092;&#1080;&#1089;</a>&#187; &#1080; &#1090;.&nbsp;&#1087;.
-      </p>
-
-      <p>
-        &#1042; &#1085;&#1072;&#1089;&#1090;&#1086;&#1103;&#1097;&#1077;&#1077; &#1074;&#1088;&#1077;&#1084;&#1103; &#1087;&#1086;&#1076; &#1101;&#1075;&#1080;&#1076;&#1086;&#1081; &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1072; &#1087;&#1088;&#1086;&#1076;&#1086;&#1083;&#1078;&#1072;&#1102;&#1090; &#1074;&#1099;&#1093;&#1086;&#1076;&#1080;&#1090;&#1100; <a href="#">&#1082;&#1085;&#1080;&#1075;&#1080;</a> &#1087;&#1086;&#1076; &#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1099;&#1084;&#1080; &#1083;&#1080;&#1094;&#1077;&#1085;&#1079;&#1080;&#1103;&#1084;&#1080;.
-      </p>
-
-      <!-- Section 3: См. также -->
-      <h2 id="see-also">
-        &#1057;&#1084;. &#1090;&#1072;&#1082;&#1078;&#1077;
-        <span class="edit-link"><a href="#">[&#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; | &#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; &#1082;&#1086;&#1076;]</a></span>
-      </h2>
-
-      <ul class="see-also-list">
-        <li><a href="#">&#1057;&#1080;&#1079;&#1080;&#1092; (&#1088;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1081;)</a></li>
-        <li><a href="#">ALT Linux (&#1076;&#1080;&#1089;&#1090;&#1088;&#1080;&#1073;&#1091;&#1090;&#1080;&#1074; Linux)</a></li>
+  <div class="tm-block">
+    <h2>Navigation</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">Original Content</a></li>
+        <li><a href="#">Most Popular</a></li>
+        <li><a href="#">Linux Monthly Screenshots</a></li>
+        <li><a href="#">Helpful Sites</a></li>
+        <li><a href="#">News Feeds</a></li>
+        <li><a href="#">Site Map</a></li>
+        <li><a href="#">Polls</a></li>
+        <li><a href="#">Login</a></li>
+        <li><a href="#">Popular content</a></li>
       </ul>
-
-      <!-- Section 4: Примечания -->
-      <h2 id="notes">
-        &#1055;&#1088;&#1080;&#1084;&#1077;&#1095;&#1072;&#1085;&#1080;&#1103;
-        <span class="edit-link"><a href="#">[&#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; | &#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; &#1082;&#1086;&#1076;]</a></span>
-      </h2>
-
-      <div class="references">
-        <ol>
-          <li><span class="ref-sup">^ </span>&#1057;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1072; &#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1089;&#1090;&#1074;&#1072; ALT Linux Team &#1085;&#1072; ALT Linux Wiki</li>
-          <li><span class="ref-sup">^ </span>&#1054;&#1092;&#1080;&#1094;&#1080;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1089;&#1072;&#1081;&#1090; ALT Linux</li>
-        </ol>
-      </div>
-
-      <!-- Section 5: Ссылки -->
-      <h2 id="links">
-        &#1057;&#1089;&#1099;&#1083;&#1082;&#1080;
-        <span class="edit-link"><a href="#">[&#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; | &#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100; &#1082;&#1086;&#1076;]</a></span>
-      </h2>
-
-      <ul class="links-list">
-        <li><a href="https://www.altlinux.org" target="_blank" rel="noopener noreferrer">&#1054;&#1092;&#1080;&#1094;&#1080;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1089;&#1072;&#1081;&#1090; ALT Linux</a></li>
-        <li><a href="https://packages.altlinux.org" target="_blank" rel="noopener noreferrer">&#1056;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1086;&#1088;&#1080;&#1081; &#1057;&#1080;&#1079;&#1080;&#1092;</a></li>
-        <li><a href="https://en.altlinux.org" target="_blank" rel="noopener noreferrer">ALT Linux Wiki (&#1072;&#1085;&#1075;&#1083;.)</a></li>
-        <li><a href="https://bugzilla.altlinux.org" target="_blank" rel="noopener noreferrer">&#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072; &#1086;&#1090;&#1089;&#1083;&#1077;&#1078;&#1080;&#1074;&#1072;&#1085;&#1080;&#1103; &#1086;&#1096;&#1080;&#1073;&#1086;&#1082; ALT Linux</a></li>
-        <li><a href="https://lists.altlinux.org" target="_blank" rel="noopener noreferrer">&#1057;&#1087;&#1080;&#1089;&#1082;&#1080; &#1088;&#1072;&#1089;&#1089;&#1099;&#1083;&#1082;&#1080; ALT Linux</a></li>
-      </ul>
-
-      <!-- Categories -->
-      <div class="categories">
-        <span class="categories-label">&#1050;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;: </span>
-        <a href="#" class="category-tag">ALT Linux</a>
-      </div>
-    </article>
+    </div>
   </div>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="wiki-footer">
-    <div class="footer-links">
-      <a href="#">&#1055;&#1086;&#1083;&#1080;&#1090;&#1080;&#1082;&#1072; &#1082;&#1086;&#1085;&#1092;&#1080;&#1076;&#1077;&#1085;&#1094;&#1080;&#1072;&#1083;&#1100;&#1085;&#1086;&#1089;&#1090;&#1080;</a>
-      <a href="#">&#1054;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077; &#1042;&#1080;&#1082;&#1080;&#1087;&#1077;&#1076;&#1080;&#1080;</a>
-      <a href="#">&#1054;&#1090;&#1082;&#1072;&#1079; &#1086;&#1090; &#1086;&#1090;&#1074;&#1077;&#1090;&#1089;&#1090;&#1074;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;</a>
-      <a href="#">&#1057;&#1074;&#1103;&#1078;&#1080;&#1090;&#1077;&#1089;&#1100; &#1089; &#1085;&#1072;&#1084;&#1080;</a>
-      <a href="#">&#1050;&#1086;&#1076;&#1077;&#1082;&#1089; &#1087;&#1086;&#1074;&#1077;&#1076;&#1077;&#1085;&#1080;&#1103;</a>
-      <a href="#">&#1056;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1080;</a>
-      <a href="#">&#1057;&#1090;&#1072;&#1090;&#1080;&#1089;&#1090;&#1080;&#1082;&#1072;</a>
-      <a href="#">&#1047;&#1072;&#1103;&#1074;&#1083;&#1077;&#1085;&#1080;&#1077; &#1086; &#1082;&#1091;&#1082;&#1080;</a>
-      <a href="#">&#1052;&#1086;&#1073;&#1080;&#1083;&#1100;&#1085;&#1072;&#1103; &#1074;&#1077;&#1088;&#1089;&#1080;&#1103;</a>
+  <div class="tm-block">
+    <h2>Language Selection</h2>
+    <div class="tm-block-content">
+      <div class="tm-lang-flags">
+        <span class="tm-lang-flag" title="English" style="background:#00247d">EN</span>
+        <span class="tm-lang-flag" title="French" style="background:#002395">FR</span>
+        <span class="tm-lang-flag" title="German" style="background:#000">DE</span>
+        <span class="tm-lang-flag" title="Italian" style="background:#009246">IT</span>
+        <span class="tm-lang-flag" title="Portuguese" style="background:#006600">PT</span>
+        <span class="tm-lang-flag" title="Spanish" style="background:#c60b1e">ES</span>
+      </div>
+      <div class="tm-lang-select">
+        <select>
+          <option>English</option><option>Afrikaans</option><option>Albanian</option><option>Arabic</option><option>Armenian</option><option>Azerbaijani</option><option>Basque</option><option>Belarusian</option><option>Bulgarian</option><option>Catalan</option><option>Chinese (Simplified)</option><option>Chinese (Traditional)</option><option>Croatian</option><option>Czech</option><option>Danish</option><option>Dutch</option><option>Estonian</option><option>Filipino</option><option>Finnish</option><option>French</option><option>Galician</option><option>Georgian</option><option>German</option><option>Greek</option><option>Haitian Creole</option><option>Hebrew</option><option>Hindi</option><option>Hungarian</option><option>Icelandic</option><option>Indonesian</option><option>Irish</option><option>Italian</option><option>Japanese</option><option>Korean</option><option>Latvian</option><option>Lithuanian</option><option>Macedonian</option><option>Malay</option><option>Maltese</option><option>Norwegian</option><option>Persian</option><option>Polish</option><option>Portuguese</option><option>Romanian</option><option>Russian</option><option>Serbian</option><option>Slovak</option><option>Slovenian</option><option>Spanish</option><option>Swahili</option><option>Swedish</option><option>Thai</option><option>Turkish</option><option>Ukrainian</option><option>Urdu</option><option>Vietnamese</option><option>Welsh</option><option>Yiddish</option>
+        </select>
+      </div>
     </div>
+  </div>
 
-    <div class="footer-brands">
-      <svg width="88" height="31" viewBox="0 0 88 31" fill="none">
-        <rect width="88" height="31" rx="2" fill="#f8f9fa"/>
-        <text x="44" y="12" text-anchor="middle" style="font-size:5px;fill:#202122;font-family:sans-serif;">Wikimedia</text>
-        <text x="44" y="22" text-anchor="middle" style="font-size:5px;fill:#202122;font-family:sans-serif;">Foundation</text>
-      </svg>
-      <svg width="80" height="15" viewBox="0 0 80 15" fill="none">
-        <rect width="80" height="15" rx="2" fill="#f8f9fa"/>
-        <text x="40" y="11" text-anchor="middle" style="font-size:6px;fill:#202122;font-family:sans-serif;">Powered by MediaWiki</text>
-      </svg>
+  <div class="tm-block">
+    <h2>Search</h2>
+    <div class="tm-block-content">
+      <div class="tm-search-form">
+        <label style="font-size:11px;display:block;margin-bottom:4px">Search this site:</label>
+        <input type="text">
+        <button type="button">Search</button>
+      </div>
     </div>
+  </div>
 
-    <div class="footer-license">
-      &#1058;&#1077;&#1082;&#1089;&#1090; &#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1077;&#1085; &#1087;&#1086; &#1083;&#1080;&#1094;&#1077;&#1085;&#1079;&#1080;&#1080; Creative Commons Attribution-ShareAlike; &#1074; &#1086;&#1090;&#1076;&#1077;&#1083;&#1100;&#1085;&#1099;&#1093; &#1089;&#1083;&#1091;&#1095;&#1072;&#1103;&#1093; &#1084;&#1086;&#1075;&#1091;&#1090; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1086;&#1074;&#1072;&#1090;&#1100; &#1076;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;&#1085;&#1099;&#1077; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103;.
+  <div class="tm-block">
+    <h2>Authors Information</h2>
+    <div class="tm-block-content tm-authors">
+      <ul>
+        <li><a href="#">Community</a></li>
+        <li><a href="#">Roy</a></li>
+        <li><a href="#">Rianne</a></li>
+        <li><a href="#">You</a></li>
+      </ul>
+      <p>Everyone is free to <a href="#">register</a> and <a href="#">submit stories</a> to this site. <a href="#">Blogs</a> too can be created by anyone.</p>
+      <p style="margin-top:8px"><strong>Tux Machines (TM)-specific links</strong></p>
+      <ul>
+        <li><a href="#"><strong>Help Support TM</strong></a></li>
+        <li><a href="#"><strong>List of TM Supporters</strong></a></li>
+        <li><a href="#"><strong>Contact TM</strong></a></li>
+      </ul>
     </div>
-  </footer>
+  </div>
 
-</div>
+  <div class="tm-block">
+    <h2>LWN</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">[$] Moving physical pages from user space</a></li>
+        <li><a href="#">Security updates for Monday</a></li>
+        <li><a href="#">Kernel prepatch 6.6-rc2</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Active forum topics</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">Montblanc sails the chronometry seas</a></li>
+        <li><a href="#">Sky Recommended Add-ins and Links</a></li>
+        <li><a href="#">Sweatin' out the hits, maybe a shower or two</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Collabora</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">WhisperSpeech: Exploring New Horizons in Text-to-Speech Technology</a></li>
+        <li><a href="#">Empowering Open Source at IBC 2023</a></li>
+        <li><a href="#">Monado SLAM datasets now available</a></li>
+        <li><a href="#">Video codecs: Adding AV1 stateless video decoder support to Linux</a></li>
+        <li><a href="#">Linux kernel 6.5: USB4v2 and Wifi7 have arrived</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>9to5Linux</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">HP Linux Imaging and Printing Drivers Now Support Fedora 38 and Ubuntu 23.04</a></li>
+        <li><a href="#">9to5Linux Weekly Roundup: September 17th, 2023</a></li>
+        <li><a href="#">Ubuntu 23.10 to Enable Native Wayland Support by Default on Its Firefox Snap</a></li>
+        <li><a href="#">Ubuntu 23.10 (Mantic Minotaur) Is Now Powered by Linux Kernel 6.5</a></li>
+        <li><a href="#">Fedora Linux 40 to Offer the KDE Plasma 6 Desktop on Wayland and Drop X11 Session</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Gnu Planet</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">health @ Savannah: GNUHealth Hospital Management 4.2.2 patchset released</a></li>
+        <li><a href="#">GNU Health: Caminos Cruzados and GNU Solidario join forces in healthcare for Gambia</a></li>
+        <li><a href="#">FSF Blogs: GNU40 - Celebration in the US</a></li>
+        <li><a href="#">unifont @ Savannah: Unifont 15.1.01 Released</a></li>
+        <li><a href="#">FSF Events: Free Software Directory meeting on IRC</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>FOSS Force</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">AMD Linux Gaming Performance Largely Unchanged With Linux 6.6 Git</a></li>
+        <li><a href="#">Pluralistic: Greenwashing set Canada on fire (16 Sept 2023)</a></li>
+        <li><a href="#">Grab some Bethesda Favourites from this Fanatical bundle</a></li>
+        <li><a href="#">How To Install HandBrake on AlmaLinux 9</a></li>
+        <li><a href="#">LWJGL 3.3.3 Released With Updated Bindings, GraalVM Native Image Support</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>FOSSLinux</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">5 foolproof ways to manage and get time in Linux</a></li>
+        <li><a href="#">The ultimate guide: Syncing your Linux time with NTP server</a></li>
+        <li><a href="#">Choosing the right Linux file system: Your ultimate guide</a></li>
+        <li><a href="#">Perfecting Linux virtualization: 10 essential VirtualBox settings</a></li>
+        <li><a href="#">Unpacking and installing .tar.xz and .tar.gz files on Ubuntu</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Phoronix</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">RISC-V With Linux 5.16 Enabling Open-Source NVIDIA Driver As Part Of Default Kernel</a></li>
+        <li><a href="#">KDE Lands More Plasma Wayland Fixes, Other Enhancements For Plasma 5.24</a></li>
+        <li><a href="#">Valve Shares New Steam Deck Details, Proton Update Available For Testing</a></li>
+        <li><a href="#">Intel Posts Linux Graphics Driver Patches For Raptor Lake</a></li>
+        <li><a href="#">Radeon Software 21.40.1 Linux Driver Unifies ROCm</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>OpenSource.com</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">New developments at Opensource.com</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Kde Planet</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">Kdenlive 23.08.1 released</a></li>
+        <li><a href="#">So let's talk about this Wayland thing</a></li>
+        <li><a href="#">Kraft Version 1.1</a></li>
+        <li><a href="#">Weather Benefits</a></li>
+        <li><a href="#">This week in KDE: more Plasma 6 dev</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Fedora Magazine</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">Contribute at Passkey Auth, Fedora CoreOS and IoT Test Week</a></li>
+        <li><a href="#">Quick Fedora shirt update and sale of last stock with the old logo</a></li>
+        <li><a href="#">Contribute at the Fedora Linux Test Week for Kernel 6.5 and Toolbx Test Day</a></li>
+        <li><a href="#">Fedora libostree Post-Installation Setup, Modifications, and Tips</a></li>
+        <li><a href="#">Fedora Linux Flatpak cool apps to try for September</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Mozilla</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">Niko Matsakis: Stability without stressing the !@#! out</a></li>
+        <li><a href="#">The Talospace Project: Partial ppc64le JIT available again for Firefox 115ESR</a></li>
+        <li><a href="#">Patrick Cloke: Celery architecture breakdown</a></li>
+        <li><a href="#">Mozilla Thunderbird: Thunderbird for Android / K-9 Mail: August 2023</a></li>
+        <li><a href="#">The Servo Blog: This month in Servo</a></li>
+      </ul>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ======== MAIN CONTENT ======== -->
+<main class="tm-content">
+
+  <div class="tm-breadcrumb">
+    <a href="#">Home</a> &raquo; <a href="#">News Feeds</a>
+  </div>
+
+  <div class="tm-feed-header">
+    <h1>LWN</h1>
+    <div style="font-size:12px;margin-bottom:4px">
+      <span class="rss-icon">R</span>
+      <a href="#" style="font-size:11px">Syndicate content</a>
+    </div>
+  </div>
+
+  <div class="tm-feed-info">
+    <p>LWN.net is a comprehensive source of news and opinions from and about the Linux community. This is the main LWN.net feed, listing all articles which are posted to the site front page.</p>
+    <p><strong>URL:</strong> <a href="https://lwn.net">https://lwn.net</a></p>
+    <p><strong>Updated:</strong> 2 days 5 min ago</p>
+  </div>
+
+  <!-- Article 1 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] Moving physical pages from user space</a></h3>
+    <div class="tm-article-date">Monday 18th of September 2023 03:10:51 PM</div>
+    <div class="tm-article-body"><p>Processes in a Linux system run within their own virtual address spaces. Their virtual addresses map to physical pages provided by the hardware, but the kernel takes pains to hide the physical addresses of those pages; processes normally have no way of knowing (and no need to know) where their memory is located in physical memory. As a result, the system calls for memory management also deal in virtual addresses. Gregory Price is currently trying to create an exception to this rule with a proposal for a new system call that would operate on memory using physical addresses.</p></div>
+  </article>
+
+  <!-- Article 2 -->
+  <article class="tm-article">
+    <h3><a href="#">Security updates for Monday</a></h3>
+    <div class="tm-article-date">Monday 18th of September 2023 07:14:01 AM</div>
+    <div class="tm-article-body"><p>Security updates have been issued by Debian (firefox-esr, libwebp, and thunderbird), Fedora (chromium, curl, flac, libtommath, libwebp, matrix-synapse, python-matrix-common, redis, and rust-pythonize), Gentoo (binwalk, ghostscript, python-requests, rar, samba, and wireshark), Oracle (.NET 6.0, kernel, and kernel-container), Slackware (python3), and SUSE (firefox).</p></div>
+  </article>
+
+  <!-- Article 3 -->
+  <article class="tm-article">
+    <h3><a href="#">Kernel prepatch 6.6-rc2</a></h3>
+    <div class="tm-article-date">Monday 18th of September 2023 05:43:15 AM</div>
+    <div class="tm-article-body"><p>The 6.6-rc2 kernel prepatch is out for testing.</p><p>I think the most notable thing about 6.6-rc2 is simply that it's exactly 32 years to the day since the 0.01 release. And that's a round number if you are a computer person.</p><p>Because other than the random date, I don't see anything that really stands out here.</p></div>
+  </article>
+
+  <!-- Article 4 -->
+  <article class="tm-article">
+    <h3><a href="#">The Debian Project mourns the loss of Abraham Raji</a></h3>
+    <div class="tm-article-date">Friday 15th of September 2023 10:50:17 PM</div>
+    <div class="tm-article-body"><p>The Debian project is mourning Abraham Raji, who died in an accident on September 13. Abraham was a popular and respected Debian Developer as well a prominent free software champion in his home state of Kerala, India. He was a talented graphic designer and led design and branding work for DebConf23 and several other local events in recent years. Abraham gave his time selflessly when mentoring new contributors to the Debian project, and he was instrumental in creating and maintaining the Debian India website.</p><p>The Debian Project honors his good work and strong dedication to Debian and Free Software. Abraham's contributions will not be forgotten, and the high standards of his work will continue to serve as an inspiration to others.</p></div>
+  </article>
+
+  <!-- Article 5 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] Shrinking shrinker locking overhead</a></h3>
+    <div class="tm-article-date">Friday 15th of September 2023 02:51:21 PM</div>
+    <div class="tm-article-body"><p>Much of the kernel's performance is dependent on caching &mdash; keeping useful information around for future use to avoid the cost of looking it up again. The kernel aggressively caches pages of file data, directory entries, inodes, slab objects, and much more. Without active measures, though, caches will tend to grow without bounds, leading to memory exhaustion. The kernel's "shrinker" mechanism exists to be that active measure, but shrinkers have some performance difficulties of their own. This patch series from Qi Zheng seeks to address one of the worst of those by removing some locking overhead.</p></div>
+  </article>
+
+  <!-- Article 6 -->
+  <article class="tm-article">
+    <h3><a href="#">Security updates for Friday</a></h3>
+    <div class="tm-article-date">Friday 15th of September 2023 02:45:13 PM</div>
+    <div class="tm-article-body"><p>Security updates have been issued by Debian (c-ares and samba), Fedora (borgbackup, firefox, and libwebp), Oracle (.NET 6.0 and kernel), Slackware (libwebp), SUSE (chromium and firefox), and Ubuntu (atftp, dbus, gawk, libssh2, libwebp, modsecurity-apache, and mutt).</p></div>
+  </article>
+
+  <!-- Article 7 -->
+  <article class="tm-article">
+    <h3><a href="#">PostgreSQL 16 released</a></h3>
+    <div class="tm-article-date">Thursday 14th of September 2023 08:58:03 PM</div>
+    <div class="tm-article-body"><p>Version 16 of the PostgreSQL database manager has been released. PostgreSQL 16 contains many new features and enhancements, including: allow parallelization of FULL and internal right OUTER hash joins; allow logical replication from standby servers; allow logical replication subscribers to apply large transactions in parallel; allow monitoring of I/O statistics using the new pg_stat_io view; add SQL/JSON constructors and identity functions; improve performance of vacuum freezing; add support for regular expression matching of user and database names in pg_hba.conf, and user names in pg_ident.conf.</p></div>
+  </article>
+
+  <!-- Article 8 -->
+  <article class="tm-article">
+    <h3><a href="#">Videos from FOSSY released (Software Freedom Conservancy)</a></h3>
+    <div class="tm-article-date">Thursday 14th of September 2023 04:59:41 PM</div>
+    <div class="tm-article-body"><p>The Software Freedom Conservancy (SFC) has announced the availability of videos from the first-ever Free and Open Source Yearly (FOSSY) conference, which was held in July in Portland, Oregon in the US. During the four days of the conference, there were a wide variety of talks from speakers with a range of experience and backgrounds, and amazing community focused discussions.</p></div>
+  </article>
+
+  <!-- Article 9 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] Why glibc's fstat() is slow</a></h3>
+    <div class="tm-article-date">Thursday 14th of September 2023 04:29:36 PM</div>
+    <div class="tm-article-body"><p>The fstat() system call retrieves some of the metadata &mdash; owner, size, protections, timestamps, and so on &mdash; associated with an open file descriptor. One might not think of it as a performance-critical system call, but there are workloads that make a lot of fstat() calls; it is not something that should be slowed unnecessarily. As it turns out, though, the GNU C Library (glibc) has been doing exactly that, but a fix is in the works.</p></div>
+  </article>
+
+  <!-- Article 10 -->
+  <article class="tm-article">
+    <h3><a href="#">Security updates for Thursday</a></h3>
+    <div class="tm-article-date">Thursday 14th of September 2023 02:05:15 PM</div>
+    <div class="tm-article-body"><p>Security updates have been issued by Debian (firefox-esr, libwebp, ruby-loofah, and ruby-rails-html-sanitizer), Fedora (open-vm-tools and salt), Oracle (.NET 7.0, dmidecode, flac, gcc, httpd:2.4, keylime, libcap, librsvg2, and qemu-kvm), Red Hat (.NET 6.0 and .NET 7.0), Slackware (libarchive and mozilla), SUSE (chromium and kernel), and Ubuntu (curl, firefox, ghostscript, open-vm-tools, postgresql-9.5, and thunderbird).</p></div>
+  </article>
+
+  <!-- Article 11 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] LWN.net Weekly Edition for September 14, 2023</a></h3>
+    <div class="tm-article-date">Thursday 14th of September 2023 12:59:40 AM</div>
+    <div class="tm-article-body"><p>The LWN.net Weekly Edition for September 14, 2023 is available.</p></div>
+  </article>
+
+  <!-- Article 12 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] The bogus CVE problem</a></h3>
+    <div class="tm-article-date">Wednesday 13th of September 2023 08:46:31 PM</div>
+    <div class="tm-article-body"><p>The "Common Vulnerabilities and Exposures" (CVE) system was launched late in the previous century (September 1999) to track vulnerabilities in software. Over the years since, it has had a somewhat checkered reputation, along with some attempts to replace it, but CVE numbers are still the only effective way to track vulnerabilities. While that can certainly be useful, the CVE-assignment (and severity scoring) process is not without its problems. The prominence of CVE numbers, and the consequent increase in "reputation" for a reporter, have combined to create a system that can be &mdash; and is &mdash; actively gamed.</p></div>
+  </article>
+
+  <!-- Article 13 -->
+  <article class="tm-article">
+    <h3><a href="#">Stable kernels 6.5.3, 6.4.16, and 6.1.53</a></h3>
+    <div class="tm-article-date">Wednesday 13th of September 2023 11:33:35 AM</div>
+    <div class="tm-article-body"><p>The 6.5.3, 6.4.16, and 6.1.53 stable kernel updates have been released; each contains a large number of important fixes. Note that the 6.4.x line ends with 6.4.16.</p></div>
+  </article>
+
+  <!-- Article 14 -->
+  <article class="tm-article">
+    <h3><a href="#">Security updates for Wednesday</a></h3>
+    <div class="tm-article-date">Wednesday 13th of September 2023 11:30:51 AM</div>
+    <div class="tm-article-body"><p>Security updates have been issued by Debian (e2guardian), Fedora (libeconf), Red Hat (dmidecode, kernel, kernel-rt, keylime, kpatch-patch, libcap, librsvg2, linux-firmware, and qemu-kvm), Slackware (mozilla), SUSE (chromium and shadow), and Ubuntu (cups, dotnet6, dotnet7, file, flac, and ruby-redcloth).</p></div>
+  </article>
+
+  <!-- Article 15 -->
+  <article class="tm-article">
+    <h3><a href="#">A GCC -fstack-protector vulnerability on arm64</a></h3>
+    <div class="tm-article-date">Tuesday 12th of September 2023 09:18:11 PM</div>
+    <div class="tm-article-body"><p>The GCC stack-protector feature detects stack-based buffer overruns by putting a canary value on the stack and noticing if that value is changed. It turns out, though, that dynamically allocated local variables (such as variable-length arrays and space obtained with alloca()) are placed beyond the canary, so overflows of those variables will not be detected. As a result, arm64 binaries built with vulnerable versions of GCC are not as protected as they should be and need to be rebuilt.</p></div>
+  </article>
+
+  <!-- Article 16 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] Arduino: open source for microcontroller boards</a></h3>
+    <div class="tm-article-date">Tuesday 12th of September 2023 08:27:49 PM</div>
+    <div class="tm-article-body"><p>Arduino has emerged as one of the prime success stories of the open-hardware movement. In recent years, the company has shifted its focus toward Internet of Things (IoT) applications. As part of this transformation, it has completely redesigned its open-source integrated development environment (IDE), adding a more professional feature set for its hobbyist target audience.</p></div>
+  </article>
+
+  <!-- Article 17 -->
+  <article class="tm-article">
+    <h3><a href="#">Password-stealing Linux malware served for 3 years and no one noticed (Ars Technica)</a></h3>
+    <div class="tm-article-date">Tuesday 12th of September 2023 08:26:30 PM</div>
+    <div class="tm-article-body"><p>Ars Technica reports on a credential-stealing Trojan horse that would infect only some of those who installed the "Free Download Manager". The site, freedownloadmanager[.]org, offered a benign version of a Linux offering known as the Free Download Manager. Starting in 2020, the same domain at times redirected users to the domain deb.fdmpkg[.]org, which served a malicious version of the app.</p></div>
+  </article>
+
+  <!-- Article 18 -->
+  <article class="tm-article">
+    <h3><a href="#">Security updates for Tuesday</a></h3>
+    <div class="tm-article-date">Tuesday 12th of September 2023 12:23:00 PM</div>
+    <div class="tm-article-body"><p>Security updates have been issued by Debian (node-cookiejar and orthanc), Oracle (firefox, kernel, and kernel-container), Red Hat (flac and httpd:2.4), Slackware (vim), SUSE (python-Django, terraform-provider-aws, terraform-provider-helm, and terraform-provider-null), and Ubuntu (c-ares, curl, linux-azure, linux-azure-5.15, linux-azure-fde, linux-azure-fde-5.15, linux-raspi, and linux-ibm, linux-ibm-5.4).</p></div>
+  </article>
+
+  <!-- Article 19 -->
+  <article class="tm-article">
+    <h3><a href="#">[$] The rest of the 6.6 merge window</a></h3>
+    <div class="tm-article-date">Monday 11th of September 2023 02:24:45 PM</div>
+    <div class="tm-article-body"><p>Linus Torvalds released 6.6-rc1 and closed the 6.6 merge window on September 10. At that point, 12,230 non-merge changesets had been pulled into the mainline repository, which is exactly 500 more than were pulled for 6.5 at this stage in the cycle. Over 7,000 of those changes were pulled after our first-half summary was written; they brought a fair amount of new functionality with them.</p></div>
+  </article>
+
+  <!-- Article 20 -->
+  <article class="tm-article">
+    <h3><a href="#">Security updates for Monday</a></h3>
+    <div class="tm-article-date">Monday 11th of September 2023 01:56:30 PM</div>
+    <div class="tm-article-body"><p>Security updates have been issued by Debian (frr, kernel, libraw, mutt, and open-vm-tools), Fedora (cjose, pypy, vim, wireshark, and xrdp), Gentoo (apache), Mageia (chromium-browser-stable, clamav, ghostscript, librsvg, libtiff, openssl, poppler, postgresql, python-pypdf2, and unrar), Red Hat (flac), SUSE (firefox, geoipupdate, icu73_2, libssh2_org, rekor, skopeo, and webkit2gtk3), and Ubuntu (linux-azure, linux-azure-4.15, linux-azure-5.4, linux-gcp-5.4, linux-gkeop, linux-raspi, linux-raspi-5.4, linux-xilinx-zynqmp, linux-gcp, linux-gcp-6.2, linux-ibm, linux-oracle, linux-starfive, linux-gcp-5.15, linux-gkeop-5.15, and opendmarc).</p></div>
+  </article>
+
+  <!-- Pager -->
+  <div class="tm-pager">
+    <span class="current">1</span>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">4</a>
+    <a href="#">5</a>
+    <a href="#">6</a>
+    <a href="#">7</a>
+    <a href="#">8</a>
+    <a href="#">9</a>
+    <span style="padding:4px 2px">...</span>
+    <a href="#">next &rsaquo;</a>
+    <a href="#">last &raquo;</a>
+  </div>
+
+</main>
+
+<!-- ======== RIGHT SIDEBAR ======== -->
+<aside class="tm-sidebar-right">
+
+  <div class="tm-block">
+    <h2>More in Tux Machines</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">Highlights</a></li>
+        <li><a href="#">Front Page</a></li>
+        <li><a href="#">Latest Headlines</a></li>
+        <li><a href="#">Archive</a></li>
+        <li><a href="#">Recent comments</a></li>
+        <li><a href="#">All-Time Popular Stories</a></li>
+        <li><a href="#">Hot Topics</a></li>
+        <li><a href="#">New Members</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>digiKam 7.7.0 is released</h2>
+    <div class="tm-block-content">
+      <p style="font-size:12px;margin-bottom:6px">After three months of active maintenance and another bug triage, the digiKam team is proud to present version 7.7.0 of its open source digital photo manager. See below the list of most important features coming with this release.</p>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Dilution and Misuse of the "Linux" Brand</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li>
+          <a href="#">Linux Foundation Rewards StepSecurity's Impact on CI/CD Pipeline Security</a>
+          <span class="ed-note">[Ed: Having just participated in a FUD attack together with a Microsoft proxy]</span>
+        </li>
+        <li>
+          <a href="#">Cardano Roundup: Lace Wallet Announcement, Hoskinson Proposes Self-Regulation, and Linux Foundation Membership</a>
+          <span class="ed-note">[Ed: The "Linux" Foundation misuses or sells the Linux brand]</span>
+        </li>
+        <li>
+          <a href="#">Can SONiC be the Linux of Networking?</a>
+          <span class="ed-note">[Ed: The Register now abuses the Linux brand to describe something of Microsoft]</span>
+        </li>
+        <li><a href="#">Kuro: An Unofficial Microsoft To-Do Desktop Client</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Samsung, Red Hat to Work on Linux Drivers for Future Tech</h2>
+    <div class="tm-block-content">
+      <p style="font-size:12px;margin-bottom:6px">Samsung is working on new memory technologies that provide faster bandwidth inside hardware for data to travel between CPUs, storage and other computing resources. The company also announced it was partnering with Red Hat to ensure these technologies have Linux compatibility.</p>
+      <a href="#" class="read-more">Read more</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>today's howtos</h2>
+    <div class="tm-block-content">
+      <ul>
+        <li><a href="#">How to install go1.19beta on Ubuntu 22.04 - NextGenTips</a></li>
+        <li><a href="#">molecule test: failed to connect to bus in systemd container - openQA bites</a></li>
+        <li><a href="#">How To Install MongoDB on AlmaLinux 9 - idroot</a></li>
+        <li><a href="#">An introduction (and how-to) to Plugin Loader for the Steam Deck</a></li>
+        <li><a href="#">Self-host a Ghost Blog With Traefik</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Syndication &amp; Social Media</h2>
+    <div class="tm-block-content tm-syndication">
+      <ul>
+        <li><a href="#">Overview</a></li>
+        <li><a href="#">Twitter</a></li>
+      </ul>
+      <p><em>Follow the site via RSS/Twitter.</em></p>
+      <p><strong>Full RSS:</strong> <span class="rss-icon">R</span></p>
+      <p>RSS feeds for particular topics are <a href="#">also available</a></p>
+      <div class="tm-syndication-icons">
+        <span title="Diaspora" style="width:20px;height:20px;background:#333;border-radius:50%;display:inline-block"></span>
+        <span title="Mastodon" style="width:20px;height:20px;background:#6364ff;border-radius:4px;display:inline-block"></span>
+      </div>
+      <p><strong>Twitter:</strong> <span style="display:inline-block;width:16px;height:16px;background:#1da1f2;border-radius:3px;vertical-align:middle"></span></p>
+      <p style="font-size:10px;color:#888;margin-top:6px"><strong>CC</strong> Content (where original) is available under CC-BY-SA, copyrighted by original author/s.</p>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Support Tux Machines</h2>
+    <div class="tm-block-content tm-support">
+      <a href="#">Help Support TM</a>
+      <a href="#">Wall of Appreciation</a>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Recent comments</h2>
+    <div class="tm-block-content tm-recent-comments">
+      <ul>
+        <li><a href="#">KDE Apps Mid-Year Update (KDE.news)</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">OMG! Ubuntu!</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">In Slashdot today</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">KaOS 2022.06 Release Adds KDE Plasma 5.25</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">Another Linux Weekly Roundup</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">LINUX Unplugged</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">Linux Around The World: New Zealand</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">Microsoft blocks Windows downloads in Russia</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">Developers grapple with open source software security</a><span class="comment-age">1 year 12 weeks ago</span></li>
+        <li><a href="#">ITPro</a><span class="comment-age">1 year 12 weeks ago</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tm-block">
+    <h2>Who's online</h2>
+    <div class="tm-block-content tm-online">
+      <p>There are currently <em>0 users</em> and <em>0 guests</em> online.</p>
+    </div>
+  </div>
+
+  <!-- Feed blocks -->
+  <div class="tm-block"><h2>Gizmoz</h2><div class="tm-block-content"><ul><li><a href="#">Romeo ESP32-S3 Dev kit targets robotic applications</a></li><li><a href="#">Armbian September news &amp; DietPi late August news</a></li><li><a href="#">Fanless embedded system leverages Hailo-8 AI engine</a></li><li><a href="#">HMI-Board incorporates Renesas RA6M3 MCU</a></li><li><a href="#">Waveshare presents low-cost RP2040 Pi-Zero board</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>FOSSMint</h2><div class="tm-block-content"><ul><li><a href="#">Ubuntu 22.04 LTS: What's New and How to Customize It</a></li><li><a href="#">Slurm - A Free Job Scheduler for Clusters and Supercomputers</a></li><li><a href="#">5 Tools to Create a Bootable USB with Multiple Operating Systems</a></li><li><a href="#">14 Best Open Source Solutions for Your E-commerce Business in 2023</a></li><li><a href="#">The 11 Best Search Engines to Explore the Invisible Web (2023)</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Debug Point</h2><div class="tm-block-content"><ul><li><a href="#">10 Best Linux Mint Themes for Everyone</a></li><li><a href="#">Linux Mint Debian Edition (LMDE) 6: Best New Features</a></li><li><a href="#">Fedora 39: Best New Features and Updates</a></li><li><a href="#">Ubuntu 23.10 (Mantic Minotaur): Best New Features</a></li><li><a href="#">Reviving the Glory Days: NsCDE Desktop for UNIX Buffs</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>LXer</h2><div class="tm-block-content"><ul><li><a href="#">Fixing Black Screen After Suspension in Ubuntu 22.04: NVIDIA &amp; AMD Guide</a></li><li><a href="#">10 Best Linux Mint Themes for Everyone</a></li><li><a href="#">Linux Installation Date: How to Discover Your System's Age</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>UbuntuBuzz</h2><div class="tm-block-content"><ul><li><a href="#">Collection of Recommended Applications on Debian 12 Bookworm</a></li><li><a href="#">Popular Software Applications and Games Written in C++ Language</a></li><li><a href="#">Devuan GNU+Linux 5 "Daedalus" Released</a></li><li><a href="#">LibreOffice Calc: Create and Use Filters</a></li><li><a href="#">Install LibreCAD on Ubuntu - A Useful Software for 2D Architects</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>SparkyLinux</h2><div class="tm-block-content"><ul><li><a href="#">Sparky 7.1</a></li><li><a href="#">Sparky 6.7.1 armhf &amp; arm64</a></li><li><a href="#">Sparky news 2023/08</a></li><li><a href="#">Penguins' eggs</a></li><li><a href="#">RPi Imager</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Linux Journal</h2><div class="tm-block-content"><ul><li><a href="#">Safeguarding Linux Landscapes: Backup and Restore Strategies</a></li><li><a href="#">Navigating the Landscape of Linux File System Types</a></li><li><a href="#">How to Change the Hostname in Debian 12 BookWorm</a></li><li><a href="#">The Arch Decision: Evaluating If a Leap From Manjaro to EndeavourOS Is Right for You</a></li><li><a href="#">How to Set or Modify the Path Variable in Linux</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Linux Today</h2><div class="tm-block-content"><ul><li><a href="#">Ubuntu 23.10 Mantic Minotaur Is Now Powered by Linux Kernel 6.5</a></li><li><a href="#">OpenSUSE Seeks Leap Replacement: Which Distro Will Rise to the Challenge?</a></li><li><a href="#">Coding in Rust? RustRover Is a New IDE by JetBrains</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>System 76</h2><div class="tm-block-content"><ul><li><a href="#">System76 "Nebula": five years of advancements in Thelio engineering</a></li><li><a href="#">AI Proteins: Creating Groundbreaking Treatments on System76 Hardware</a></li><li><a href="#">Customizing COSMIC: Theming and Applications</a></li><li><a href="#">COSMIC Skies of a Colorado July</a></li><li><a href="#">System76 Unveils a Powerful New Oryx Pro</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Kernel Planet</h2><div class="tm-block-content"><ul><li><a href="#">Rusty Russell: The HRF Bounty On Human-Readable Offers</a></li><li><a href="#">Matthew Garrett: Reconstructing an invalid TPM event log</a></li><li><a href="#">Linux Plumbers Conference: Registration Currently Sold Out</a></li><li><a href="#">Linux Plumbers Conference: Containers and Checkpoint/Restore MC CFP</a></li><li><a href="#">Dave Airlie: Talk about compute and community and where things are at.</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Purism</h2><div class="tm-block-content"><ul><li><a href="#">Librem 5 @ $999 or $899 when Bundled with AweSIM Cellular Service</a></li><li><a href="#">The Path to the Liberty Phone</a></li><li><a href="#">Purism Launches New Secure Librem 11 Tablet</a></li><li><a href="#">PureBoot 28 - Upstreaming and Upscaling</a></li><li><a href="#">PureOS on Liberty Phone and Librem 5</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>LinuxSecurity.com Advisories</h2><div class="tm-block-content"><ul><li><a href="#">Debian: DSA-5502-1: xrdp security update</a></li><li><a href="#">Debian: DSA-5501-1: gnome-shell security update</a></li><li><a href="#">Debian: DSA-5500-1: flac security update</a></li><li><a href="#">Debian: DSA-5499-1: chromium security update</a></li><li><a href="#">RedHat: RHSA-2023-5208:01 Moderate: Red Hat Ansible Automation Platform 2.4</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Debian</h2><div class="tm-block-content"><ul><li><a href="#">Valhalla's Things: Non-e (Note)Book</a></li><li><a href="#">Aigars Mahinovs: Debconf 23 photos</a></li><li><a href="#">Sergio Talens-Oliag: GitLab CI/CD Tips</a></li><li><a href="#">Sam Hartman: AI Safety is in the Context</a></li><li><a href="#">John Goerzen: How Gapped is Your Air?</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>It's FOSS</h2><div class="tm-block-content"><ul><li><a href="#">Free and Open-Source Alternatives to Microsoft Planner</a></li><li><a href="#">How to Update Pi-hole Easily</a></li><li><a href="#">How to Downgrade Flatpak Packages in Linux</a></li><li><a href="#">Yes! You Can Install Unity Desktop on Arch Linux.</a></li><li><a href="#">Harmonoid: A Beautiful Cross-Platform Music Player</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>OMG! Ubuntu!</h2><div class="tm-block-content"><ul><li><a href="#">Ubuntu 23.10 Runs Firefox in Wayland Mode by Default</a></li><li><a href="#">10 Best Features in GNOME 45</a></li><li><a href="#">LMDE 6 (Linux Mint Debian Edition) Beta is Available to Download</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>GamingOnLinux</h2><div class="tm-block-content"><ul><li><a href="#">Portal 2 VR mod gets an early release</a></li><li><a href="#">Unity Considers Tentative Changes To Controversial Policies</a></li><li><a href="#">Plasma 6 optimized for Wayland gaming, plus compositor crash recovery</a></li><li><a href="#">PS1 inspired survival-horror Fear the Spotlight is out now</a></li><li><a href="#">Gamescope added support for ReShade shaders on Linux / SteamOS</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Slashdot</h2><div class="tm-block-content"><ul><li><a href="#">Ask Slashdot: What's the Best Linux Resource for a Retired Windows User?</a></li><li><a href="#">'Linux Mint Debian Edition' Begins Public Beta Testing</a></li><li><a href="#">KSMBD Finally Reaches 'Stable' State in Release Candidate for Linux Kernel 6.6</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>DW Latest Releases</h2><div class="tm-block-content"><ul><li><a href="#">09/17 Plop 23.3</a></li><li><a href="#">09/14 Peropesis 2.2</a></li><li><a href="#">09/16 FreeBSD 14.0-BETA2</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>DistroWatch</h2><div class="tm-block-content"><ul><li><a href="#">DistroWatch Weekly, Issue 1037</a></li><li><a href="#">Distribution Release: Peropesis 2.2</a></li><li><a href="#">Distribution Release: Univention Corporate Server 5.0-5</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>FSF</h2><div class="tm-block-content"><ul><li><a href="#">FSF job opportunity: Operations assistant</a></li><li><a href="#">Happening now: The second round of FSF board candidate discussions</a></li><li><a href="#">The next round of FSF board candidate discussions will start on July 24</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>Ubuntu Buzz</h2><div class="tm-block-content"><ul><li><a href="#">Collection of Recommended Applications on Debian 12 Bookworm</a></li><li><a href="#">Popular Software Applications and Games Written in C++ Language</a></li><li><a href="#">Devuan GNU+Linux 5 "Daedalus" Released</a></li><li><a href="#">LibreOffice Calc: Create and Use Filters</a></li><li><a href="#">Install LibreCAD on Ubuntu - A Useful Software for 2D Architects</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+  <div class="tm-block"><h2>LinuxLinks</h2><div class="tm-block-content"><ul><li><a href="#">Stonks - terminal based stock visualizer and tracker</a></li><li><a href="#">15 Best Free and Open Source Linux Computer Algebra Systems</a></li><li><a href="#">Alternatives to popular CLI tools: vi</a></li><li><a href="#">12 Excellent Free and Open Source Scorewriters</a></li><li><a href="#">4 Best Free and Open Source Linux Network Authentication Tools</a></li></ul><a href="#" class="read-more">Read more</a></div></div>
+
+</aside>
+
+</div><!-- .tm-page -->
+
+<!-- ======== FOOTER ======== -->
+<footer class="tm-footer">
+  <div class="tm-footer-links">
+    More on <em>Tux Machines</em>:
+    <a href="#">About</a> &#9679;
+    <a href="#">Gallery</a> &#9679;
+    <a href="#">Forum</a> &#9679;
+    <a href="#">Blogs</a> &#9679;
+    <a href="#">Search</a> &#9679;
+    <a href="#">News</a> &#9679;
+    <a href="#">RSS Feed</a>
+  </div>
+  <div>Part of <a href="#">Bytes Media</a> &#9679; Sister sites below.</div>
+  <div class="tm-footer-sister">
+    <span style="color:#8ae234">TechBytes</span>
+    <span style="color:#f4a300">Techrights</span>
+  </div>
+  <div class="tm-footer-powered">
+    Powered by <a href="https://www.drupal.org">Drupal</a>, an open source content management system
+  </div>
+  <div style="margin-top:8px">
+    Content available under <strong>CC-BY-SA</strong><br>
+    &copy; by original authors<br>
+    Powered by CentOS 6.5 (GNU/Linux), Varnish, and Drupal 6
+  </div>
+</footer>
 
 </body>
 </html>
-
