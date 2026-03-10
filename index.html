@@ -739,7 +739,7 @@ h1,h2,h3,h4 { font-weight: normal; }
   <div id="configESR" class="easter-egg-content">
     <div class="config-title">🌐 ПРОБРОС ПОРТОВ ESR</div>
     <div class="config-line"><span class="prompt">esr(config)#</span> object-group service HTTP</div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> port-range 80 <span class="comment">//Внешний порт</span></div>
+    <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> port-range 8080 <span class="comment">//Внешний порт</span></div>
     <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> exit</div>
     <div class="config-line"> </div>
     <div class="config-line"><span class="prompt">esr(config)#</span> object-group service SSH</div>
@@ -786,16 +786,16 @@ h1,h2,h3,h4 { font-weight: normal; }
     <div class="config-title">💾 НАСТРОЙКА RAID</div>
     <div class="config-line"><span class="prompt">#</span> добавляем два диска на саму машину</div>
     <div class="config-line"><span class="prompt">$</span> lsblk</div>
-    <div class="config-line"><span class="prompt">$</span> mdadm --create --verbose /dev/md0 -l 5 -n 3 /dev/sd{b,c,d}</div>
+    <div class="config-line"><span class="prompt">$</span> mdadm --create --verbose /dev/md0 -l 0 -n 3 /dev/sd{b,c}</div>
     <div class="config-line"><span class="prompt">$</span> lsblk <span class="comment"># проверяем</span></div>
     <div class="config-line"><span class="prompt">$</span> echo "DEVICE partitions" > /etc/mdadm.conf</div>
     <div class="config-line"><span class="prompt">$</span> mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm.conf</div>
     <div class="config-line"><span class="prompt">$</span> fdisk /dev/md0</div>
     <div class="config-line"><span class="prompt">#</span> в fdisk: g, n, w</div>
     <div class="config-line"><span class="prompt">$</span> mkfs.ext4 /dev/md0p1</div>
-    <div class="config-line"><span class="prompt">$</span> mkdir /raid5</div>
+    <div class="config-line"><span class="prompt">$</span> mkdir /raid</div>
     <div class="config-line"><span class="prompt">#</span> добавляем в /etc/fstab:</div>
-    <div class="config-line">/dev/md0p1       /raid5    ext4    defaults 0 0</div>
+    <div class="config-line">/dev/md0p1       /raid    ext4    defaults 0 0</div>
     <div class="config-line"><span class="prompt">$</span> mount -a <span class="comment"># проверяем монтирование</span></div>
     <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
   </div>
@@ -806,16 +806,16 @@ h1,h2,h3,h4 { font-weight: normal; }
     <div class="config-line"><span class="prompt">#</span> Настройка NFS сервера</div>
     <div class="config-line"><span class="prompt">$</span> apt-get install nfs-server -y</div>
     <div class="config-line"><span class="prompt">$</span> systemctl enable --now nfs-server</div>
-    <div class="config-line"><span class="prompt">$</span> mkdir /raid5/nfs</div>
-    <div class="config-line"><span class="prompt">$</span> chmod 777 /raid5/nfs</div>
+    <div class="config-line"><span class="prompt">$</span> mkdir /raid/nfs</div>
+    <div class="config-line"><span class="prompt">$</span> chmod 777 /raid/nfs</div>
     <div class="config-line"><span class="prompt">#</span> в /etc/exports:</div>
-    <div class="config-line">/raid5/nfs       192.168.10.64/28(rw,no_root_squash,no_subtree_check)</div>
+    <div class="config-line">/raid/nfs       192.168.10.64/28(rw,no_root_squash,no_subtree_check)</div>
     <div class="config-line"><span class="prompt">$</span> systemctl restart nfs-server</div>
     <div class="config-line"> </div>
     <div class="config-line"><span class="prompt">#</span> На HQ-CLI:</div>
     <div class="config-line"><span class="prompt">$</span> mkdir /mnt/nfs</div>
     <div class="config-line"><span class="prompt">#</span> в /etc/fstab:</div>
-    <div class="config-line">192.168.10.2:/raid5/nfs        /mnt/nfs    nfs     auto    0 0</div>
+    <div class="config-line">192.168.10.2:/raid/nfs        /mnt/nfs    nfs     auto    0 0</div>
     <div class="config-line"><span class="prompt">$</span> systemctl enable --now rpc-statd</div>
     <div class="config-line"><span class="prompt">$</span> mount -a</div>
     <div class="config-line"><span class="prompt">$</span> mount | grep nfs4</div>
@@ -860,7 +860,7 @@ h1,h2,h3,h4 { font-weight: normal; }
     <div class="config-line">services:</div>
     <div class="config-line">  wiki:</div>
     <div class="config-line">    image: mediawiki</div>
-    <div class="config-line">    container_name: wiki</div>
+    <div class="config-line">    container_name: testapp</div>
     <div class="config-line">    restart: always</div>
     <div class="config-line">    ports:</div>
     <div class="config-line">      - 8080:80</div>
@@ -868,12 +868,12 @@ h1,h2,h3,h4 { font-weight: normal; }
     <div class="config-line">      - images:/var/www/html/images</div>
     <div class="config-line">  mariadb:</div>
     <div class="config-line">    image: mariadb</div>
-    <div class="config-line">    container_name: mariadb</div>
+    <div class="config-line">    container_name: db</div>
     <div class="config-line">    restart: always</div>
     <div class="config-line">    environment:</div>
-    <div class="config-line">      MYSQL_DATABASE: mediawiki</div>
-    <div class="config-line">      MYSQL_USER: wiki</div>
-    <div class="config-line">      MYSQL_PASSWORD: WikiP@ssw0rd</div>
+    <div class="config-line">      MYSQL_DATABASE: testdb</div>
+    <div class="config-line">      MYSQL_USER: testc</div>
+    <div class="config-line">      MYSQL_PASSWORD: P@ssw0rd</div>
     <div class="config-line">      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'</div>
     <div class="config-line">    volumes:</div>
     <div class="config-line">      - db:/var/lib/mysql</div>
@@ -1422,3 +1422,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
