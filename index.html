@@ -1043,7 +1043,7 @@ br-rtr# show ntp peers
             <div class="section">📋 2. ПРОБРОС ПОРТОВ ESR</div>
             <pre>
 esr(config)# object-group service HTTP
-esr(config-object-group-service)# port-range 80 <span class="comment">//Внешний порт с которого будем пробрасывать</span>
+esr(config-object-group-service)# port-range 8080 <span class="comment">//Внешний порт с которого будем пробрасывать</span>
 esr(config-object-group-service)# exit
 
 esr(config)# object-group service SSH
@@ -1089,7 +1089,7 @@ esr# confirm
             <pre>
 <span class="comment"># добавляем два диска на саму машину</span>
 lsblk
-mdadm --create --verbose /dev/md0 -l 5 -n 3 /dev/sd{b,c,d}
+mdadm --create --verbose /dev/md0 -l 0 -n 3 /dev/sd{b,c}
 <span class="comment"># проверяем что массив создан</span>
 lsblk
 echo "DEVICE partitions" > /etc/mdadm.conf
@@ -1097,9 +1097,9 @@ mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm.conf
 fdisk /dev/md0
 <span class="comment"># в fdisk: g, n, w</span>
 mkfs.ext4 /dev/md0p1
-mkdir /raid5
+mkdir /raid
 <span class="comment"># добавляем в /etc/fstab строку</span>
-/dev/md0p1       /raid5    ext4    defaults 0 0
+/dev/md0p1       /raid    ext4    defaults 0 0
 <span class="comment"># проверяем монтирование</span>
 mount -a
             </pre>
@@ -1109,16 +1109,16 @@ mount -a
 <span class="comment"># Настройка NFS сервера</span>
 apt-get install nfs-server -y
 systemctl enable --now nfs-server
-mkdir /raid5/nfs
-chmod 777 /raid5/nfs
+mkdir /raid/nfs
+chmod 777 /raid/nfs
 <span class="comment"># в /etc/exports:</span>
-/raid5/nfs       192.168.10.64/28(rw,no_root_squash,no_subtree_check)
+/raid/nfs       192.168.10.64/28(rw,no_root_squash,no_subtree_check)
 systemctl restart nfs-server
 
 <span class="comment"># На HQ-CLI</span>
 mkdir /mnt/nfs
 <span class="comment"># в /etc/fstab:</span>
-192.168.10.2:/raid5/nfs        /mnt/nfs    nfs     auto    0 0
+192.168.10.2:/raid/nfs        /mnt/nfs    nfs     auto    0 0
 systemctl enable --now rpc-statd
 <span class="comment"># проверка</span>
 mount -a
@@ -1308,3 +1308,4 @@ docker compose -f wiki.yml up -d
     </script>
 </body>
 </html>
+
