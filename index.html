@@ -1,1107 +1,1024 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LWN | Tux Machines</title>
-<style>
-:root {
-  --tm-bg: #f5f5f0;
-  --tm-header-bg: #2e3436;
-  --tm-header-text: #ffffff;
-  --tm-nav-bg: #3c6e3c;
-  --tm-nav-hover: #4a8a4a;
-  --tm-link: #2a5db0;
-  --tm-link-hover: #1a3d70;
-  --tm-sidebar-heading-bg: #3c6e3c;
-  --tm-sidebar-heading-text: #ffffff;
-  --tm-border: #c0c0b0;
-  --tm-content-bg: #ffffff;
-  --tm-text: #333333;
-  --tm-meta: #666666;
-  --tm-footer-bg: #2e3436;
-  --tm-footer-text: #cccccc;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: "Lucida Grande","Lucida Sans Unicode",Verdana,Arial,sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--tm-text);
-  background: var(--tm-bg);
-}
-a { color: var(--tm-link); text-decoration: none; }
-a:hover { color: var(--tm-link-hover); text-decoration: underline; }
-ul { list-style: none; }
-h1,h2,h3,h4 { font-weight: normal; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker — ALT Linux Wiki</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Header */
-.tm-header {
-  background: var(--tm-header-bg);
-  color: var(--tm-header-text);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-}
-.tm-header-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.tm-header-logo h1 {
-  font-size: 28px;
-  font-weight: bold;
-  color: #fff;
-  letter-spacing: 1px;
-}
-.tm-header-logo h1 span { color: #8ae234; }
-.tm-header-slogan {
-  font-size: 12px;
-  color: #babdb6;
-  font-style: italic;
-}
+        body {
+            font-family: "Linux Libertine", Georgia, Times, serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #202122;
+            background: #f6f6f6;
+        }
 
-/* Nav */
-.tm-nav {
-  background: var(--tm-nav-bg);
-  border-bottom: 2px solid #2d5a2d;
-}
-.tm-nav ul {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0 20px;
-}
-.tm-nav li a {
-  display: block;
-  padding: 8px 14px;
-  color: #fff;
-  font-size: 13px;
-  font-weight: bold;
-  text-decoration: none;
-}
-.tm-nav li a:hover {
-  background: var(--tm-nav-hover);
-  color: #fff;
-  text-decoration: none;
-}
+        a {
+            color: #0645ad;
+            text-decoration: none;
+        }
 
-/* Page Layout */
-.tm-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  padding: 10px 0;
-}
-.tm-sidebar-left {
-  width: 220px;
-  min-width: 220px;
-  padding: 0 8px;
-}
-.tm-content {
-  flex: 1;
-  padding: 0 10px;
-  min-width: 0;
-}
-.tm-sidebar-right {
-  width: 240px;
-  min-width: 240px;
-  padding: 0 8px;
-}
+        a:hover {
+            text-decoration: underline;
+        }
 
-/* Block */
-.tm-block {
-  margin-bottom: 14px;
-  border: 1px solid var(--tm-border);
-  background: var(--tm-content-bg);
-}
-.tm-block h2 {
-  background: var(--tm-sidebar-heading-bg);
-  color: var(--tm-sidebar-heading-text);
-  padding: 6px 10px;
-  font-size: 13px;
-  font-weight: bold;
-  margin: 0;
-}
-.tm-block-content {
-  padding: 8px 10px;
-  font-size: 12px;
-}
-.tm-block-content ul {
-  list-style: disc;
-  padding-left: 18px;
-}
-.tm-block-content ul li {
-  margin-bottom: 4px;
-}
-.tm-block-content ul li a { font-size: 12px; }
-.read-more {
-  display: block;
-  text-align: right;
-  margin-top: 6px;
-  font-size: 11px;
-  color: var(--tm-link);
-}
+        a:visited {
+            color: #0b0080;
+        }
 
-/* Breadcrumb */
-.tm-breadcrumb {
-  padding: 8px 0;
-  font-size: 12px;
-  color: var(--tm-meta);
-  border-bottom: 1px solid var(--tm-border);
-  margin-bottom: 12px;
-}
+        a.new {
+            color: #ba0000;
+        }
 
-/* Feed header */
-.tm-feed-header { margin-bottom: 16px; }
-.tm-feed-header h1 {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--tm-text);
-  margin-bottom: 8px;
-}
-.tm-feed-info {
-  background: #f0f0e8;
-  border: 1px solid var(--tm-border);
-  padding: 10px 14px;
-  margin-bottom: 18px;
-  font-size: 12px;
-  line-height: 1.6;
-}
-.tm-feed-info p { margin-bottom: 4px; }
+        /* Header */
+        .header {
+            background: linear-gradient(to bottom, #fff 60%, #f6f6f6);
+            border-bottom: 1px solid #a7d7f9;
+        }
 
-/* Articles */
-.tm-article {
-  border-bottom: 1px solid #e0e0d8;
-  padding: 12px 0;
-}
-.tm-article:last-child { border-bottom: none; }
-.tm-article h3 {
-  font-size: 15px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.tm-article h3 a { color: var(--tm-link); }
-.tm-article-date {
-  font-size: 11px;
-  color: var(--tm-meta);
-  margin-bottom: 6px;
-}
-.tm-article-body {
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--tm-text);
-}
-.tm-article-body p { margin-bottom: 8px; }
+        .header-inner {
+            max-width: 1340px;
+            margin: 0 auto;
+            padding: 0.5em 1em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-/* Pager */
-.tm-pager {
-  padding: 14px 0;
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  align-items: center;
-  font-size: 12px;
-}
-.tm-pager a, .tm-pager .current {
-  display: inline-block;
-  padding: 4px 10px;
-  border: 1px solid var(--tm-border);
-  background: #fff;
-  color: var(--tm-link);
-  text-decoration: none;
-}
-.tm-pager .current {
-  background: var(--tm-nav-bg);
-  color: #fff;
-  font-weight: bold;
-  border-color: var(--tm-nav-bg);
-}
-.tm-pager a:hover { background: #e8e8e0; text-decoration: none; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-/* Lang */
-.tm-lang-flags {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-.tm-lang-flag {
-  display: inline-block;
-  width: 20px;
-  height: 14px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 8px;
-  text-align: center;
-  color: #fff;
-  line-height: 14px;
-}
-.tm-lang-select select {
-  width: 100%;
-  font-size: 11px;
-  padding: 2px;
-}
+        .logo-img {
+            width: 135px;
+            height: 45px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 11px;
+        }
 
-/* Search */
-.tm-search-form input[type="text"] {
-  width: 100%;
-  padding: 4px 6px;
-  font-size: 12px;
-  border: 1px solid var(--tm-border);
-  margin-bottom: 4px;
-}
-.tm-search-form button {
-  background: var(--tm-nav-bg);
-  color: #fff;
-  border: none;
-  padding: 4px 12px;
-  font-size: 11px;
-  cursor: pointer;
-}
+        .logo-text {
+            font-size: 1.1em;
+            color: #54595d;
+        }
 
-/* Authors */
-.tm-authors p {
-  margin-top: 6px;
-  font-size: 11px;
-  line-height: 1.5;
-}
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
 
-/* Syndication */
-.rss-icon {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  background: #f60;
-  border-radius: 2px;
-  vertical-align: middle;
-  text-align: center;
-  color: #fff;
-  font-size: 10px;
-  line-height: 14px;
-  font-weight: bold;
-  margin-right: 4px;
-}
-.tm-syndication p { margin-bottom: 6px; }
-.tm-syndication-icons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin: 6px 0;
-}
+        .search-input {
+            width: 220px;
+            padding: 6px 8px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 13px;
+        }
 
-/* Comments */
-.tm-recent-comments ul { list-style: disc; padding-left: 18px; }
-.tm-recent-comments li { margin-bottom: 4px; font-size: 12px; }
-.comment-age { font-size: 10px; color: var(--tm-meta); display: block; }
+        .search-btn {
+            padding: 6px 12px;
+            margin-left: 4px;
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 13px;
+        }
 
-/* Support */
-.tm-support a { display: block; margin-bottom: 4px; font-weight: bold; }
+        .search-btn:hover {
+            background: #fff;
+        }
 
-/* Online */
-.tm-online { font-size: 12px; }
+        .user-links {
+            font-size: 12px;
+            color: #54595d;
+        }
 
-/* Footer */
-.tm-footer {
-  background: var(--tm-footer-bg);
-  color: var(--tm-footer-text);
-  padding: 14px 20px;
-  text-align: center;
-  font-size: 11px;
-  line-height: 1.8;
-  margin-top: 10px;
-}
-.tm-footer a { color: #8ae234; }
-.tm-footer-links { margin-bottom: 8px; }
-.tm-footer-links a { margin: 0 4px; }
-.tm-footer-sister {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 8px 0;
-}
-.tm-footer-sister span {
-  display: inline-flex;
-  align-items: center;
-  background: #3a3a3a;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: bold;
-}
-.tm-footer-powered { margin-top: 6px; }
+        .user-links a {
+            margin-left: 10px;
+        }
 
-.ed-note { display: block; font-size: 10px; color: #888; font-style: italic; }
+        /* Main container */
+        .main-container {
+            max-width: 1340px;
+            margin: 0 auto;
+            display: flex;
+            background: #fff;
+        }
 
-/* Easter Egg стили - скрытые конфиги */
-.secret-trigger {
-  cursor: default;
-  transition: all 0.3s ease;
-  position: relative;
-  border-left: 2px solid transparent;
-}
-.secret-trigger:hover {
-  border-left-color: #8ae234;
-  background: rgba(138, 226, 52, 0.02);
-}
-.secret-trigger::after {
-  content: "⚙️";
-  font-size: 8px;
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  opacity: 0.15;
-  filter: blur(0.5px);
-  pointer-events: none;
-}
-.secret-trigger:hover::after {
-  opacity: 0.4;
-  filter: blur(0);
-}
+        /* Sidebar */
+        .sidebar {
+            width: 160px;
+            min-width: 160px;
+            padding: 1em;
+            background: #f6f6f6;
+            border-right: 1px solid #ddd;
+            font-size: 12px;
+        }
 
-.easter-egg-content {
-  display: none;
-  background: #1e1e1e;
-  color: #8ae234;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  padding: 16px;
-  border-radius: 8px;
-  margin: 15px 0;
-  white-space: pre-wrap;
-  border: 2px solid #3c6e3c;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-  max-height: 400px;
-  overflow-y: auto;
-  line-height: 1.4;
-  position: relative;
-}
-.easter-egg-content.visible {
-  display: block;
-}
-.easter-egg-content .config-title {
-  color: #f4a300;
-  font-weight: bold;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #3c6e3c;
-  padding-bottom: 6px;
-  font-size: 13px;
-  position: sticky;
-  top: 0;
-  background: #1e1e1e;
-  z-index: 10;
-}
-.easter-egg-content .config-line {
-  display: block;
-  margin: 4px 0 4px 10px;
-  color: #d4d4d4;
-  font-family: 'Courier New', monospace;
-}
-.easter-egg-content .config-line .prompt {
-  color: #f4a300;
-  font-weight: bold;
-}
-.easter-egg-content .config-line .comment {
-  color: #6a9955;
-  font-style: italic;
-}
-.easter-egg-content .config-line .ip {
-  color: #9cdcfe;
-}
-.easter-egg-content .config-line .cmd {
-  color: #c586c0;
-}
-.easter-egg-close {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  background: #3c6e3c;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-}
-.easter-egg-close:hover {
-  background: #4a8a4a;
-}
+        .sidebar-section {
+            margin-bottom: 1.5em;
+        }
 
-/* Полноэкранная страница с конфигурацией */
-.config-page {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.98);
-  z-index: 9999;
-  overflow-y: auto;
-  padding: 30px 20px;
-}
-.config-page.visible {
-  display: block;
-}
-.config-page-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: #1e1e1e;
-  border: 2px solid #8ae234;
-  border-radius: 12px;
-  padding: 30px;
-  color: #8ae234;
-  font-family: 'Courier New', monospace;
-  position: relative;
-  box-shadow: 0 0 30px rgba(138, 226, 52, 0.2);
-}
-.config-page-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  color: #fff;
-  font-size: 28px;
-  cursor: pointer;
-  background: #3c6e3c;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-.config-page-close:hover {
-  background: #4a8a4a;
-  transform: scale(1.1);
-}
-.config-page-header {
-  color: #f4a300;
-  font-size: 24px;
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #3c6e3c;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  font-weight: bold;
-}
-.config-page pre {
-  white-space: pre-wrap;
-  font-size: 13px;
-  line-height: 1.5;
-  margin: 0;
-  color: #d4d4d4;
-}
-.config-page .section {
-  color: #8ae234;
-  font-weight: bold;
-  font-size: 16px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #3c6e3c;
-  padding-bottom: 5px;
-}
-.config-page .command {
-  color: #f4a300;
-}
-.config-page .comment {
-  color: #6a9955;
-}
-.config-page .ip {
-  color: #9cdcfe;
-}
-.config-page .path {
-  color: #ce9178;
-}
+        .sidebar-section h3 {
+            font-size: 12px;
+            font-weight: normal;
+            color: #54595d;
+            padding-bottom: 0.25em;
+            border-bottom: 1px solid #c8ccd1;
+            margin-bottom: 0.5em;
+        }
 
-/* Микро-подсказки */
-.micro-hint {
-  font-size: 8px;
-  color: transparent;
-  user-select: none;
-  text-shadow: 0 0 0 #333;
-  opacity: 0.05;
-}
+        .sidebar-section ul {
+            list-style: none;
+        }
 
-/* Индикаторы разделов */
-.section-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #8ae234;
-  margin-right: 5px;
-  opacity: 0.2;
-}
+        .sidebar-section li {
+            padding: 0.25em 0;
+        }
 
-@media (max-width: 960px) {
-  .tm-page { flex-direction: column; }
-  .tm-sidebar-left, .tm-sidebar-right { width: 100%; min-width: unset; }
-}
-</style>
+        /* Content area */
+        .content-wrapper {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #a7d7f9;
+            background: linear-gradient(to bottom, #fff, #f6f6f6);
+            padding: 0 1em;
+        }
+
+        .tab {
+            padding: 0.5em 1em;
+            font-size: 12px;
+            color: #0645ad;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-bottom: -1px;
+        }
+
+        .tab:hover {
+            background: #fff;
+        }
+
+        .tab.active {
+            background: #fff;
+            border-color: #a7d7f9;
+            border-bottom-color: #fff;
+        }
+
+        .tabs-right {
+            margin-left: auto;
+            display: flex;
+        }
+
+        /* Content */
+        .content {
+            padding: 1em 1.5em 2em;
+        }
+
+        .firstHeading {
+            font-size: 1.8em;
+            font-weight: normal;
+            border-bottom: 1px solid #a2a9b1;
+            padding-bottom: 0.25em;
+            margin-bottom: 0.5em;
+            font-family: "Linux Libertine", Georgia, Times, serif;
+        }
+
+        .mw-body-content {
+            line-height: 1.6;
+        }
+
+        /* TOC */
+        .toc {
+            display: inline-block;
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            padding: 10px 15px;
+            margin: 1em 0;
+            font-size: 13px;
+        }
+
+        .toc-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.5em;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+        }
+
+        .toc li {
+            margin: 0.3em 0;
+        }
+
+        .toc .toclevel-2 {
+            margin-left: 1.5em;
+        }
+
+        .toc .toclevel-3 {
+            margin-left: 3em;
+        }
+
+        .tocnumber {
+            color: #202122;
+            margin-right: 0.3em;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 1.5em;
+            font-weight: normal;
+            border-bottom: 1px solid #a2a9b1;
+            margin: 1em 0 0.5em;
+            padding-bottom: 0.2em;
+            font-family: "Linux Libertine", Georgia, Times, serif;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 1em 0 0.5em;
+        }
+
+        h4 {
+            font-size: 1em;
+            font-weight: bold;
+            margin: 0.8em 0 0.4em;
+        }
+
+        /* Code blocks */
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 1em;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0.5em 0;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 1px 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 0.5em 0 0.5em 1.6em;
+        }
+
+        li {
+            margin: 0.25em 0;
+        }
+
+        /* Paragraphs */
+        p {
+            margin: 0.5em 0;
+        }
+
+        /* Info boxes */
+        .messagebox {
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            padding: 10px 15px;
+            margin: 1em 0;
+        }
+
+        .warningbox {
+            background: #fef6e7;
+            border: 1px solid #fc3;
+        }
+
+        .infobox {
+            background: #eaf3ff;
+            border: 1px solid #a7d7f9;
+        }
+
+        /* Category box */
+        .catlinks {
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            padding: 5px 10px;
+            margin-top: 2em;
+            font-size: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            max-width: 1340px;
+            margin: 0 auto;
+            padding: 1em;
+            font-size: 12px;
+            color: #54595d;
+            border-top: 1px solid #a2a9b1;
+            background: #f6f6f6;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+            margin-bottom: 0.5em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .header-inner {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .search-box {
+                order: 3;
+                width: 100%;
+            }
+            
+            .search-input {
+                flex: 1;
+            }
+        }
+
+        .mw-editsection {
+            font-size: 12px;
+            font-weight: normal;
+            margin-left: 1em;
+        }
+
+        .mw-editsection a {
+            color: #54595d;
+        }
+
+        dl {
+            margin: 0.5em 0;
+        }
+
+        dt {
+            font-weight: bold;
+        }
+
+        dd {
+            margin-left: 1.6em;
+        }
+
+        /* Скрытые конфигурации */
+        .config-content {
+            display: none;
+            background: #1e1e1e;
+            color: #8ae234;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+            white-space: pre-wrap;
+            border: 2px solid #3c6e3c;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .config-content.visible {
+            display: block;
+        }
+
+        .config-title {
+            color: #f4a300;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #3c6e3c;
+            padding-bottom: 6px;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            background: #1e1e1e;
+            z-index: 10;
+        }
+
+        .config-line {
+            display: block;
+            margin: 4px 0 4px 10px;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+        }
+
+        .config-line .prompt {
+            color: #f4a300;
+            font-weight: bold;
+        }
+
+        .config-line .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+
+        .config-line .ip {
+            color: #9cdcfe;
+        }
+
+        .config-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            background: #3c6e3c;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .config-close:hover {
+            background: #4a8a4a;
+        }
+
+        /* Полноэкранная страница с полной конфигурацией */
+        .config-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.98);
+            z-index: 9999;
+            overflow-y: auto;
+            padding: 30px 20px;
+        }
+
+        .config-page.visible {
+            display: block;
+        }
+
+        .config-page-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border: 2px solid #8ae234;
+            border-radius: 12px;
+            padding: 30px;
+            color: #8ae234;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            box-shadow: 0 0 30px rgba(138, 226, 52, 0.2);
+        }
+
+        .config-page-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            background: #3c6e3c;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .config-page-close:hover {
+            background: #4a8a4a;
+            transform: scale(1.1);
+        }
+
+        .config-page-header {
+            color: #f4a300;
+            font-size: 24px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3c6e3c;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .config-page .section {
+            color: #8ae234;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #3c6e3c;
+            padding-bottom: 5px;
+        }
+
+        .config-page pre {
+            white-space: pre-wrap;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+            color: #d4d4d4;
+            background: #1e1e1e;
+        }
+    </style>
 </head>
 <body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-img">ALT Linux Wiki</div>
+            </div>
+            <div class="user-links">
+                <a href="#">Войти</a>
+                <a href="#">Создать учётную запись</a>
+            </div>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Поиск в ALT Linux Wiki">
+                <button class="search-btn">Найти</button>
+            </div>
+        </div>
+    </header>
 
-<!-- ======== HEADER ======== -->
-<header class="tm-header">
-  <div class="tm-header-logo">
-    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-      <circle cx="30" cy="30" r="28" fill="#2e3436" stroke="#8ae234" stroke-width="2"/>
-      <ellipse cx="30" cy="32" rx="16" ry="18" fill="#f5f5dc"/>
-      <ellipse cx="30" cy="30" rx="12" ry="14" fill="#333"/>
-      <ellipse cx="30" cy="44" rx="10" ry="5" fill="#f4a300"/>
-      <circle cx="25" cy="26" r="3" fill="#fff"/>
-      <circle cx="35" cy="26" r="3" fill="#fff"/>
-      <circle cx="25" cy="26" r="1.5" fill="#000"/>
-      <circle cx="35" cy="26" r="1.5" fill="#000"/>
-      <ellipse cx="30" cy="32" rx="4" ry="2" fill="#f4a300"/>
-    </svg>
-    <div>
-      <h1><span>Tux</span> Machines</h1>
-      <div class="tm-header-slogan">Do you waddle the waddle?</div>
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Навигация</h3>
+                <ul>
+                    <li><a href="#">Заглавная страница</a></li>
+                    <li><a href="#">Свежие правки</a></li>
+                    <li><a href="#">Случайная страница</a></li>
+                    <li><a href="#">Справка</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Дистрибутивы</h3>
+                <ul>
+                    <li><a href="#">Simply Linux</a></li>
+                    <li><a href="#">Альт Рабочая станция</a></li>
+                    <li><a href="#">Альт Сервер</a></li>
+                    <li><a href="#">Альт Образование</a></li>
+                    <li><a href="#">Starterkits</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Инструменты</h3>
+                <ul>
+                    <li><a href="#">Ссылки сюда</a></li>
+                    <li><a href="#">Связанные правки</a></li>
+                    <li><a href="#">Спецстраницы</a></li>
+                    <li><a href="#">Сведения о странице</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="content-wrapper">
+            <nav class="tabs">
+                <span class="tab active">Статья</span>
+                <span class="tab">Обсуждение</span>
+                <div class="tabs-right">
+                    <span class="tab">Читать</span>
+                    <span class="tab">Править</span>
+                    <span class="tab">История</span>
+                </div>
+            </nav>
+
+            <main class="content">
+                <h1 class="firstHeading">Docker</h1>
+                
+                <div class="mw-body-content">
+                    <p><b>Docker</b> — программное обеспечение для автоматизации развёртывания и управления приложениями в средах с поддержкой контейнеризации. Позволяет «упаковать» приложение со всем его окружением и зависимостями в контейнер.</p>
+
+                    <div class="toc">
+                        <div class="toc-title">Содержание</div>
+                        <ul>
+                            <li><span class="tocnumber">1</span> <a href="#install">Установка</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">1.1</span> <a href="#install-alt10">Установка в Альт 10 и старше</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">1.2</span> <a href="#install-p9">Установка в p9 и ранее</a></li>
+                            <li><span class="tocnumber">2</span> <a href="#config">Настройка</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">2.1</span> <a href="#autostart">Автозапуск</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">2.2</span> <a href="#user">Запуск от пользователя</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">2.3</span> <a href="#storage">Настройка хранилища</a></li>
+                            <li><span class="tocnumber">3</span> <a href="#usage">Использование</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">3.1</span> <a href="#images">Работа с образами</a></li>
+                            <li class="toclevel-2"><span class="tocnumber">3.2</span> <a href="#containers">Работа с контейнерами</a></li>
+                            <li><span class="tocnumber">4</span> <a href="#compose">Docker Compose</a></li>
+                            <li><span class="tocnumber">5</span> <a href="#problems">Возможные проблемы</a></li>
+                            <li><span class="tocnumber">6</span> <a href="#links">Ссылки</a></li>
+                        </ul>
+                    </div>
+
+                    <h2 id="install">Установка <span class="mw-editsection">[<a href="#">править</a>]</span></h2>
+                    
+                    <h3 id="install-alt10">Установка в Альт 10 и старше</h3>
+                    <p>Для установки Docker в Альт 10 и более новых версиях выполните:</p>
+                    <pre><code># apt-get update
+# apt-get install docker-engine</code></pre>
+
+                    <h3 id="install-p9">Установка в p9 и ранее</h3>
+                    <p>В более старых версиях пакет назывался иначе:</p>
+                    <pre><code># apt-get update
+# apt-get install docker-ce</code></pre>
+
+                    <h2 id="config">Настройка <span class="mw-editsection">[<a href="#">править</a>]</span></h2>
+                    
+                    <h3 id="autostart">Автозапуск</h3>
+                    <p>Для включения автозапуска Docker при старте системы:</p>
+                    <pre><code># systemctl enable docker
+# systemctl start docker</code></pre>
+
+                    <p>Проверить статус службы:</p>
+                    <pre><code># systemctl status docker</code></pre>
+
+                    <h3 id="user">Запуск от пользователя</h3>
+                    <p>По умолчанию Docker требует прав суперпользователя. Чтобы запускать команды docker от обычного пользователя, добавьте его в группу <code>docker</code>:</p>
+                    <pre><code># usermod -aG docker username</code></pre>
+
+                    <div class="messagebox warningbox">
+                        <b>Внимание:</b> После добавления пользователя в группу необходимо перелогиниться в системе или выполнить команду <code>newgrp docker</code>.
+                    </div>
+
+                    <p>Также можно использовать команду:</p>
+                    <pre><code># gpasswd -a username docker</code></pre>
+
+                    <h3 id="storage">Настройка хранилища</h3>
+                    <p>По умолчанию Docker хранит данные в <code>/var/lib/docker</code>. Для изменения расположения создайте или отредактируйте файл <code>/etc/docker/daemon.json</code>:</p>
+                    <pre><code>{
+  "data-root": "/path/to/docker/data"
+}</code></pre>
+
+                    <p>После изменения перезапустите Docker:</p>
+                    <pre><code># systemctl restart docker</code></pre>
+
+                    <h2 id="usage">Использование <span class="mw-editsection">[<a href="#">править</a>]</span></h2>
+                    
+                    <h3 id="images">Работа с образами</h3>
+                    <p>Скачать образ из Docker Hub:</p>
+                    <pre><code>$ docker pull ubuntu:22.04</code></pre>
+
+                    <p>Просмотр списка скачанных образов:</p>
+                    <pre><code>$ docker images</code></pre>
+
+                    <p>Удаление образа:</p>
+                    <pre><code>$ docker rmi image_name</code></pre>
+
+                    <p>Поиск образов:</p>
+                    <pre><code>$ docker search nginx</code></pre>
+
+                    <h3 id="containers">Работа с контейнерами</h3>
+                    <p>Запуск контейнера в интерактивном режиме:</p>
+                    <pre><code>$ docker run -it ubuntu:22.04 /bin/bash</code></pre>
+
+                    <p>Запуск контейнера в фоновом режиме:</p>
+                    <pre><code>$ docker run -d --name mycontainer nginx</code></pre>
+
+                    <p>Просмотр запущенных контейнеров:</p>
+                    <pre><code>$ docker ps</code></pre>
+
+                    <p>Просмотр всех контейнеров (включая остановленные):</p>
+                    <pre><code>$ docker ps -a</code></pre>
+
+                    <p>Остановка контейнера:</p>
+                    <pre><code>$ docker stop container_name</code></pre>
+
+                    <p>Запуск остановленного контейнера:</p>
+                    <pre><code>$ docker start container_name</code></pre>
+
+                    <p>Удаление контейнера:</p>
+                    <pre><code>$ docker rm container_name</code></pre>
+
+                    <p>Просмотр логов контейнера:</p>
+                    <pre><code>$ docker logs container_name</code></pre>
+
+                    <p>Выполнение команды в запущенном контейнере:</p>
+                    <pre><code>$ docker exec -it container_name /bin/bash</code></pre>
+
+                    <h2 id="compose">Docker Compose <span class="mw-editsection">[<a href="#">править</a>]</span></h2>
+                    <p>Docker Compose — инструмент для определения и запуска многоконтейнерных приложений.</p>
+
+                    <p>Установка:</p>
+                    <pre><code># apt-get install docker-compose</code></pre>
+
+                    <p>Пример файла <code>docker-compose.yml</code>:</p>
+                    <pre><code>version: '3.8'
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+  
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:</code></pre>
+
+                    <p>Основные команды Docker Compose:</p>
+                    <pre><code># Запуск всех сервисов
+$ docker-compose up -d
+
+# Остановка всех сервисов
+$ docker-compose down
+
+# Просмотр логов
+$ docker-compose logs -f
+
+# Пересборка образов
+$ docker-compose build
+
+# Просмотр статуса
+$ docker-compose ps</code></pre>
+
+                    <h2 id="problems">Возможные проблемы <span class="mw-editsection">[<a href="#">править</a>]</span></h2>
+                    
+                    <h4>Cannot connect to the Docker daemon</h4>
+                    <p>Если появляется ошибка:</p>
+                    <pre><code>Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?</code></pre>
+                    <p>Убедитесь, что служба Docker запущена:</p>
+                    <pre><code># systemctl start docker</code></pre>
+
+                    <h4>Permission denied</h4>
+                    <p>Если появляется ошибка прав доступа, добавьте пользователя в группу docker (см. раздел <a href="#user">Запуск от пользователя</a>).</p>
+
+                    <h4>Проблемы с сетью</h4>
+                    <p>Если контейнеры не имеют доступа к сети, проверьте настройки iptables и firewalld:</p>
+                    <pre><code># systemctl status firewalld
+# iptables -L -n</code></pre>
+
+                    <p>Может потребоваться разрешить форвардинг:</p>
+                    <pre><code># echo 1 > /proc/sys/net/ipv4/ip_forward</code></pre>
+
+                    <p>Для постоянного применения добавьте в <code>/etc/sysctl.conf</code>:</p>
+                    <pre><code>net.ipv4.ip_forward = 1</code></pre>
+
+                    <h4>Нехватка места</h4>
+                    <p>Для очистки неиспользуемых данных Docker:</p>
+                    <pre><code># Удаление остановленных контейнеров
+$ docker container prune
+
+# Удаление неиспользуемых образов
+$ docker image prune
+
+# Полная очистка (контейнеры, образы, сети, кеш)
+$ docker system prune -a</code></pre>
+
+                    <h2 id="links">Ссылки <span class="mw-editsection">[<a href="#">править</a>]</span></h2>
+                    <ul>
+                        <li><a href="https://docs.docker.com/" class="external">Официальная документация Docker</a></li>
+                        <li><a href="https://hub.docker.com/" class="external">Docker Hub — репозиторий образов</a></li>
+                        <li><a href="https://docs.docker.com/compose/" class="external">Документация Docker Compose</a></li>
+                        <li><a href="#">Podman</a> — альтернатива Docker</li>
+                        <li><a href="#">Контейнеры</a> — общая информация о контейнеризации</li>
+                    </ul>
+
+                    <div class="catlinks">
+                        <b>Категории:</b> 
+                        <a href="#">Виртуализация</a> | 
+                        <a href="#">Контейнеры</a> | 
+                        <a href="#">Серверное ПО</a> | 
+                        <a href="#">Администрирование</a>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
-  </div>
-</header>
 
-<!-- ======== NAV ======== -->
-<nav class="tm-nav">
-  <ul>
-    <li><a href="#" onclick="showFullConfig(); return false;">Home</a></li>
-    <li><a href="#" onclick="showSection('chrony'); return false;">About</a></li>
-    <li><a href="#" onclick="showSection('esr'); return false;">Gallery</a></li>
-    <li><a href="#" onclick="showSection('raid'); return false;">Forum</a></li>
-    <li><a href="#" onclick="showSection('nfs'); return false;">Blogs</a></li>
-    <li><a href="#" onclick="showSection('ansible'); return false;">IRC</a></li>
-    <li><a href="#" onclick="showSection('docker'); return false;">Search</a></li>
-    <li><a href="#" onclick="showFullConfig(); return false;">News</a></li>
-    <li><a href="#" onclick="showFullConfig(); return false;">RSS Feed</a></li>
-  </ul>
-</nav>
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">Политика конфиденциальности</a>
+            <a href="#">Описание ALT Linux Wiki</a>
+            <a href="#">Отказ от ответственности</a>
+        </div>
+        <p>Содержимое доступно по лицензии <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike</a>, если не указано иное.</p>
+    </footer>
 
-<!-- ======== MAIN LAYOUT ======== -->
-<div class="tm-page">
+    <!-- Скрытые конфигурации -->
 
-<!-- ======== LEFT SIDEBAR ======== -->
-<aside class="tm-sidebar-left">
-
-  <div class="tm-block">
-    <h2>Navigation</h2>
-    <div class="tm-block-content">
-      <ul>
-        <li><a href="#" class="secret-trigger" onclick="showSection('chrony'); return false;"><span class="section-indicator"></span>Original Content</a></li>
-        <li><a href="#" class="secret-trigger" onclick="showSection('esr'); return false;"><span class="section-indicator"></span>Most Popular</a></li>
-        <li><a href="#" onclick="showSection('raid'); return false;">Linux Monthly Screenshots</a></li>
-        <li><a href="#" onclick="showSection('nfs'); return false;">Helpful Sites</a></li>
-        <li><a href="#" onclick="showSection('ansible'); return false;">News Feeds</a></li>
-        <li><a href="#" onclick="showSection('docker'); return false;">Site Map</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">Polls</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">Login</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">Popular content</a></li>
-      </ul>
+    <!-- Конфигурация Chrony -->
+    <div id="configChrony" class="config-content">
+        <div class="config-title">⏰ НАСТРОЙКА CHRONY</div>
+        <div class="config-line"><span class="prompt">#</span> На ISP - control chrony server</div>
+        <div class="config-line"><span class="prompt">$</span> cd /etc/chrony.conf</div>
+        <div class="config-line"><span class="prompt">#</span> комментируем строку pool pool.ntp.org iburst</div>
+        <div class="config-line"><span class="prompt">#</span> вводим новую строку</div>
+        <div class="config-line">server 127.0.0.1 iburst</div>
+        <div class="config-line">local stratum 5</div>
+        <div class="config-line"><span class="prompt">$</span> systemctl restart chronyd</div>
+        <div class="config-line"><span class="prompt">$</span> chronyc sources</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">#</span> Настройка HQ/BR-RTR</div>
+        <div class="config-line"><span class="prompt">br-rtr(config)#</span> no ntp broadcast-client enable</div>
+        <div class="config-line"><span class="prompt">br-rtr(config)#</span> ntp server <span class="ip">(IP ISP ens19)</span></div>
+        <div class="config-line"><span class="prompt">br-rtr(config-ntp)#</span> minpoll 1</div>
+        <div class="config-line"><span class="prompt">br-rtr(config-ntp)#</span> maxpoll 4</div>
+        <div class="config-line"><span class="prompt">br-rtr(config-ntp)#</span> end</div>
+        <div class="config-line"><span class="prompt">br-rtr#</span> commit</div>
+        <div class="config-line"><span class="prompt">br-rtr#</span> confirm</div>
+        <div class="config-line"><span class="prompt">br-rtr#</span> show ntp configuration</div>
+        <div class="config-line"><span class="prompt">br-rtr#</span> show ntp peers</div>
+        <span class="config-close" onclick="hideAllConfigs(); return false;">×</span>
     </div>
-  </div>
 
-  <div class="tm-block">
-    <h2>Language Selection</h2>
-    <div class="tm-block-content">
-      <div class="tm-lang-flags">
-        <span class="tm-lang-flag" title="English" style="background:#00247d" onclick="showSection('chrony'); return false;">EN</span>
-        <span class="tm-lang-flag" title="French" style="background:#002395" onclick="showSection('esr'); return false;">FR</span>
-        <span class="tm-lang-flag" title="German" style="background:#000" onclick="showSection('raid'); return false;">DE</span>
-        <span class="tm-lang-flag" title="Italian" style="background:#009246" onclick="showSection('nfs'); return false;">IT</span>
-        <span class="tm-lang-flag" title="Portuguese" style="background:#006600" onclick="showSection('ansible'); return false;">PT</span>
-        <span class="tm-lang-flag" title="Spanish" style="background:#c60b1e" onclick="showSection('docker'); return false;">ES</span>
-      </div>
-      <div class="tm-lang-select">
-        <select onchange="showSection(this.value);">
-          <option value="">English</option>
-          <option value="chrony">🔧 Chrony Configuration</option>
-          <option value="esr">🔧 ESR Port Forwarding</option>
-          <option value="raid">🔧 RAID Setup</option>
-          <option value="nfs">🔧 NFS Configuration</option>
-          <option value="ansible">🔧 Ansible Setup</option>
-          <option value="docker">🔧 Docker & MediaWiki</option>
-          <option value="full">📋 Full Configuration</option>
-          <option>Afrikaans</option>
-          <option>Albanian</option>
-        </select>
-      </div>
+    <!-- Конфигурация ESR -->
+    <div id="configESR" class="config-content">
+        <div class="config-title">🌐 ПРОБРОС ПОРТОВ ESR</div>
+        <div class="config-line"><span class="prompt">esr(config)#</span> object-group service HTTP</div>
+        <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> port-range 8080 <span class="comment">//Внешний порт</span></div>
+        <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> exit</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">esr(config)#</span> object-group service SSH</div>
+        <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> port-range 2026</div>
+        <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> exit</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">esr(config)#</span> object-group network UPLINK</div>
+        <div class="config-line"><span class="prompt">esr(config-object-group-network)#</span> ip address-range 172.16.5.1 <span class="comment">//на hq 172.16.4.1</span></div>
+        <div class="config-line"><span class="prompt">esr(config-object-group-network)#</span> exit</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">esr(config)#</span> nat destination</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat)#</span> pool BR_SRV_HTTP(HQ_SRV_HTTP)</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip address 172.16.5.1 <span class="comment">//на hq 172.16.4.1</span></div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip port 8080</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> exit</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat)#</span> pool BR_SRV_SSH</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip address 172.16.5.2 <span class="comment">//на hq 172.16.4.2</span></div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip port 2026</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> exit</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">esr(config-dnat)#</span> ruleset DNAT</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-ruleset)#</span> from default</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-ruleset)#</span> rule 1</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match protocol tcp</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-address UPLINK</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-port HTTP</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> action destination-nat pool BR_SRV_HTTP(HQ_SRV_HTTP)</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> enable</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> exit</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-ruleset)#</span> rule 2</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match protocol tcp</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-address UPLINK</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-port SSH</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> action destination-nat pool BR_SRV_SSH(HQ_SRV_SSH)</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> enable</div>
+        <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> end</div>
+        <div class="config-line"><span class="prompt">esr#</span> commit</div>
+        <div class="config-line"><span class="prompt">esr#</span> confirm</div>
+        <span class="config-close" onclick="hideAllConfigs(); return false;">×</span>
     </div>
-  </div>
 
-  <div class="tm-block">
-    <h2>Search</h2>
-    <div class="tm-block-content">
-      <div class="tm-search-form">
-        <label style="font-size:11px;display:block;margin-bottom:4px">Search this site:</label>
-        <input type="text" id="searchInput" placeholder="Enter command...">
-        <button type="button" onclick="searchConfig();">Search</button>
-      </div>
-      <div class="micro-hint">Ctrl+Shift+C | Ctrl+1-6</div>
+    <!-- Конфигурация RAID -->
+    <div id="configRAID" class="config-content">
+        <div class="config-title">💾 НАСТРОЙКА RAID</div>
+        <div class="config-line"><span class="prompt">#</span> добавляем два диска на саму машину</div>
+        <div class="config-line"><span class="prompt">$</span> lsblk</div>
+        <div class="config-line"><span class="prompt">$</span> mdadm --create --verbose /dev/md0 -l 0 -n 3 /dev/sd{b,c}</div>
+        <div class="config-line"><span class="prompt">$</span> lsblk <span class="comment"># проверяем</span></div>
+        <div class="config-line"><span class="prompt">$</span> echo "DEVICE partitions" > /etc/mdadm.conf</div>
+        <div class="config-line"><span class="prompt">$</span> mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm.conf</div>
+        <div class="config-line"><span class="prompt">$</span> fdisk /dev/md0</div>
+        <div class="config-line"><span class="prompt">#</span> в fdisk: g, n, w</div>
+        <div class="config-line"><span class="prompt">$</span> mkfs.ext4 /dev/md0p1</div>
+        <div class="config-line"><span class="prompt">$</span> mkdir /raid</div>
+        <div class="config-line"><span class="prompt">#</span> добавляем в /etc/fstab:</div>
+        <div class="config-line">/dev/md0p1       /raid    ext4    defaults 0 0</div>
+        <div class="config-line"><span class="prompt">$</span> mount -a <span class="comment"># проверяем монтирование</span></div>
+        <span class="config-close" onclick="hideAllConfigs(); return false;">×</span>
     </div>
-  </div>
 
-  <div class="tm-block">
-    <h2>Authors Information</h2>
-    <div class="tm-block-content tm-authors">
-      <ul>
-        <li><a href="#" onclick="showSection('chrony'); return false;">Community</a></li>
-        <li><a href="#" onclick="showSection('esr'); return false;">Roy</a></li>
-        <li><a href="#" onclick="showSection('raid'); return false;">Rianne</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">You</a></li>
-      </ul>
-      <p>Everyone is free to <a href="#" onclick="showSection('nfs'); return false;">register</a> and <a href="#" onclick="showSection('ansible'); return false;">submit stories</a> to this site. <a href="#" onclick="showSection('docker'); return false;">Blogs</a> too can be created by anyone.</p>
-      <p style="margin-top:8px"><strong>Tux Machines (TM)-specific links</strong></p>
-      <ul>
-        <li><a href="#" onclick="showFullConfig(); return false;"><strong>Help Support TM</strong></a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;"><strong>List of TM Supporters</strong></a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;"><strong>Contact TM</strong></a></li>
-      </ul>
+    <!-- Конфигурация NFS -->
+    <div id="configNFS" class="config-content">
+        <div class="config-title">📁 НАСТРОЙКА NFS</div>
+        <div class="config-line"><span class="prompt">#</span> Настройка NFS сервера</div>
+        <div class="config-line"><span class="prompt">$</span> apt-get install nfs-server -y</div>
+        <div class="config-line"><span class="prompt">$</span> systemctl enable --now nfs-server</div>
+        <div class="config-line"><span class="prompt">$</span> mkdir /raid/nfs</div>
+        <div class="config-line"><span class="prompt">$</span> chmod 777 /raid/nfs</div>
+        <div class="config-line"><span class="prompt">#</span> в /etc/exports:</div>
+        <div class="config-line">/raid/nfs       192.168.10.64/28(rw,no_root_squash,no_subtree_check)</div>
+        <div class="config-line"><span class="prompt">$</span> systemctl restart nfs-server</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">#</span> На HQ-CLI:</div>
+        <div class="config-line"><span class="prompt">$</span> mkdir /mnt/nfs</div>
+        <div class="config-line"><span class="prompt">#</span> в /etc/fstab:</div>
+        <div class="config-line">192.168.10.2:/raid/nfs        /mnt/nfs    nfs     auto    0 0</div>
+        <div class="config-line"><span class="prompt">$</span> systemctl enable --now rpc-statd</div>
+        <div class="config-line"><span class="prompt">$</span> mount -a</div>
+        <div class="config-line"><span class="prompt">$</span> mount | grep nfs4</div>
+        <span class="config-close" onclick="hideAllConfigs(); return false;">×</span>
     </div>
-  </div>
 
-  <div class="tm-block">
-    <h2>Quick Access</h2>
-    <div class="tm-block-content">
-      <ul>
-        <li><a href="#" onclick="showSection('chrony'); return false;">⏰ Chrony (Ctrl+1)</a></li>
-        <li><a href="#" onclick="showSection('esr'); return false;">🌐 ESR NAT (Ctrl+2)</a></li>
-        <li><a href="#" onclick="showSection('raid'); return false;">💾 RAID (Ctrl+3)</a></li>
-        <li><a href="#" onclick="showSection('nfs'); return false;">📁 NFS (Ctrl+4)</a></li>
-        <li><a href="#" onclick="showSection('ansible'); return false;">⚙️ Ansible (Ctrl+5)</a></li>
-        <li><a href="#" onclick="showSection('docker'); return false;">🐳 Docker (Ctrl+6)</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">📋 Full Config (Ctrl+Shift+C)</a></li>
-      </ul>
+    <!-- Конфигурация Ansible -->
+    <div id="configAnsible" class="config-content">
+        <div class="config-title">⚙️ НАСТРОЙКА ANSIBLE</div>
+        <div class="config-line"><span class="prompt">#</span> На BR-SRV</div>
+        <div class="config-line"><span class="prompt">#</span> в /etc/ansible/ansible.cfg:</div>
+        <div class="config-line">host_key_checking = False</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">#</span> в /etc/ansible/hosts:</div>
+        <div class="config-line">all:</div>
+        <div class="config-line">  vars:</div>
+        <div class="config-line">    ansible_python_interpreter: /usr/bin/python3</div>
+        <div class="config-line"> </div>
+        <div class="config-line">LNX:</div>
+        <div class="config-line">  hosts:</div>
+        <div class="config-line">    HQ-SRV:</div>
+        <div class="config-line">      ansible_host: 172.16.100.2</div>
+        <div class="config-line">      ansible_user: sshuser</div>
+        <div class="config-line">      ansible_port: 2026</div>
+        <div class="config-line">      ansible_password: P@ssw0rd</div>
+        <div class="config-line">    HQ-CLI:</div>
+        <div class="config-line">      ansible_host: 192.168.200.2</div>
+        <div class="config-line">      ansible_user: user</div>
+        <div class="config-line">      ansible_password: user</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">$</span> ansible all -m ping <span class="comment"># проверка</span></div>
+        <span class="config-close" onclick="hideAllConfigs(); return false;">×</span>
     </div>
-  </div>
 
-</aside>
-
-<!-- ======== MAIN CONTENT ======== -->
-<main class="tm-content">
-
-  <div class="tm-breadcrumb">
-    <a href="#" onclick="showFullConfig(); return false;">Home</a> &raquo; 
-    <a href="#" onclick="showSection('chrony'); return false;">News</a> &raquo; 
-    <a href="#" onclick="showFullConfig(); return false;">Feeds</a>
-  </div>
-
-  <div class="tm-feed-header">
-    <h1>LWN</h1>
-    <div style="font-size:12px;margin-bottom:4px">
-      <span class="rss-icon" onclick="showFullConfig(); return false;">R</span>
-      <a href="#" style="font-size:11px" onclick="showFullConfig(); return false;">Syndicate content</a>
+    <!-- Конфигурация Docker -->
+    <div id="configDocker" class="config-content">
+        <div class="config-title">🐳 НАСТРОЙКА DOCKER (скрытая)</div>
+        <div class="config-line"><span class="prompt">$</span> apt-get install docker-engine docker-compose-v2</div>
+        <div class="config-line"><span class="prompt">$</span> systemctl enable --now docker</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">#</span> создаем файл wiki.yml:</div>
+        <div class="config-line">services:</div>
+        <div class="config-line">  wiki:</div>
+        <div class="config-line">    image: mediawiki</div>
+        <div class="config-line">    container_name: testapp</div>
+        <div class="config-line">    restart: always</div>
+        <div class="config-line">    ports:</div>
+        <div class="config-line">      - 8080:80</div>
+        <div class="config-line">    volumes:</div>
+        <div class="config-line">      - images:/var/www/html/images</div>
+        <div class="config-line">  mariadb:</div>
+        <div class="config-line">    image: mariadb</div>
+        <div class="config-line">    container_name: db</div>
+        <div class="config-line">    restart: always</div>
+        <div class="config-line">    environment:</div>
+        <div class="config-line">      MYSQL_DATABASE: testdb</div>
+        <div class="config-line">      MYSQL_USER: testc</div>
+        <div class="config-line">      MYSQL_PASSWORD: P@ssw0rd</div>
+        <div class="config-line">      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'</div>
+        <div class="config-line">    volumes:</div>
+        <div class="config-line">      - db:/var/lib/mysql</div>
+        <div class="config-line">volumes:</div>
+        <div class="config-line">  images:</div>
+        <div class="config-line">  db:</div>
+        <div class="config-line"> </div>
+        <div class="config-line"><span class="prompt">$</span> docker compose -f wiki.yml up -d</div>
+        <div class="config-line"><span class="prompt">$</span> <span class="comment"># проверяем на HQ-CLI</span></div>
+        <span class="config-close" onclick="hideAllConfigs(); return false;">×</span>
     </div>
-  </div>
 
-  <div class="tm-feed-info">
-    <p>LWN.net is a comprehensive source of news and opinions from and about the Linux community. This is the main LWN.net feed, listing all articles which are posted to the site front page.</p>
-    <p><strong>URL:</strong> <a href="#" onclick="showFullConfig(); return false;">https://lwn.net</a></p>
-    <p><strong>Updated:</strong> 2 days 5 min ago</p>
-    <p><strong>Hidden documentation:</strong> 
-      <span style="color:#8ae234; cursor:pointer;" onclick="showFullConfig(); return false;">📋 Full Config</span> | 
-      <span style="color:#f4a300; cursor:pointer;" onclick="showAllSections(); return false;">⚙️ All Sections</span>
-    </p>
-  </div>
-
-  <!-- Конфигурация Chrony -->
-  <div id="configChrony" class="easter-egg-content">
-    <div class="config-title">⏰ НАСТРОЙКА CHRONY</div>
-    <div class="config-line"><span class="prompt">#</span> На ISP - control chrony server</div>
-    <div class="config-line"><span class="prompt">$</span> cd /etc/chrony.conf</div>
-    <div class="config-line"><span class="prompt">#</span> комментируем строку pool pool.ntp.org iburst</div>
-    <div class="config-line"><span class="prompt">#</span> вводим новую строку</div>
-    <div class="config-line">server 127.0.0.1 iburst</div>
-    <div class="config-line">local stratum 5</div>
-    <div class="config-line"><span class="prompt">$</span> systemctl restart chronyd</div>
-    <div class="config-line"><span class="prompt">$</span> chronyc sources</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">#</span> Настройка HQ/BR-RTR</div>
-    <div class="config-line"><span class="prompt">br-rtr(config)#</span> no ntp broadcast-client enable</div>
-    <div class="config-line"><span class="prompt">br-rtr(config)#</span> ntp server <span class="ip">(IP ISP ens19)</span></div>
-    <div class="config-line"><span class="prompt">br-rtr(config-ntp)#</span> minpoll 1</div>
-    <div class="config-line"><span class="prompt">br-rtr(config-ntp)#</span> maxpoll 4</div>
-    <div class="config-line"><span class="prompt">br-rtr(config-ntp)#</span> end</div>
-    <div class="config-line"><span class="prompt">br-rtr#</span> commit</div>
-    <div class="config-line"><span class="prompt">br-rtr#</span> confirm</div>
-    <div class="config-line"><span class="prompt">br-rtr#</span> show ntp configuration</div>
-    <div class="config-line"><span class="prompt">br-rtr#</span> show ntp peers</div>
-    <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
-  </div>
-
-  <!-- Конфигурация ESR -->
-  <div id="configESR" class="easter-egg-content">
-    <div class="config-title">🌐 ПРОБРОС ПОРТОВ ESR</div>
-    <div class="config-line"><span class="prompt">esr(config)#</span> object-group service HTTP</div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> port-range 8080 <span class="comment">//Внешний порт</span></div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> exit</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">esr(config)#</span> object-group service SSH</div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> port-range 2026</div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-service)#</span> exit</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">esr(config)#</span> object-group network UPLINK</div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-network)#</span> ip address-range 172.16.5.1 <span class="comment">//на hq 172.16.4.1</span></div>
-    <div class="config-line"><span class="prompt">esr(config-object-group-network)#</span> exit</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">esr(config)#</span> nat destination</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat)#</span> pool BR_SRV_HTTP(HQ_SRV_HTTP)</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip address 172.16.5.1 <span class="comment">//на hq 172.16.4.1</span></div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip port 8080</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> exit</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat)#</span> pool BR_SRV_SSH</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip address 172.16.5.2 <span class="comment">//на hq 172.16.4.2</span></div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> ip port 2026</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-pool)#</span> exit</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">esr(config-dnat)#</span> ruleset DNAT</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-ruleset)#</span> from default</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-ruleset)#</span> rule 1</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match protocol tcp</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-address UPLINK</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-port HTTP</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> action destination-nat pool BR_SRV_HTTP(HQ_SRV_HTTP)</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> enable</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> exit</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-ruleset)#</span> rule 2</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match protocol tcp</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-address UPLINK</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> match destination-port SSH</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> action destination-nat pool BR_SRV_SSH(HQ_SRV_SSH)</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> enable</div>
-    <div class="config-line"><span class="prompt">esr(config-dnat-rule)#</span> end</div>
-    <div class="config-line"><span class="prompt">esr#</span> commit</div>
-    <div class="config-line"><span class="prompt">esr#</span> confirm</div>
-    <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
-  </div>
-
-  <!-- Конфигурация RAID -->
-  <div id="configRAID" class="easter-egg-content">
-    <div class="config-title">💾 НАСТРОЙКА RAID</div>
-    <div class="config-line"><span class="prompt">#</span> добавляем два диска на саму машину</div>
-    <div class="config-line"><span class="prompt">$</span> lsblk</div>
-    <div class="config-line"><span class="prompt">$</span> mdadm --create --verbose /dev/md0 -l 0 -n 3 /dev/sd{b,c}</div>
-    <div class="config-line"><span class="prompt">$</span> lsblk <span class="comment"># проверяем</span></div>
-    <div class="config-line"><span class="prompt">$</span> echo "DEVICE partitions" > /etc/mdadm.conf</div>
-    <div class="config-line"><span class="prompt">$</span> mdadm --detail --scan --verbose | awk '/ARRAY/ {print}' >> /etc/mdadm.conf</div>
-    <div class="config-line"><span class="prompt">$</span> fdisk /dev/md0</div>
-    <div class="config-line"><span class="prompt">#</span> в fdisk: g, n, w</div>
-    <div class="config-line"><span class="prompt">$</span> mkfs.ext4 /dev/md0p1</div>
-    <div class="config-line"><span class="prompt">$</span> mkdir /raid</div>
-    <div class="config-line"><span class="prompt">#</span> добавляем в /etc/fstab:</div>
-    <div class="config-line">/dev/md0p1       /raid    ext4    defaults 0 0</div>
-    <div class="config-line"><span class="prompt">$</span> mount -a <span class="comment"># проверяем монтирование</span></div>
-    <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
-  </div>
-
-  <!-- Конфигурация NFS -->
-  <div id="configNFS" class="easter-egg-content">
-    <div class="config-title">📁 НАСТРОЙКА NFS</div>
-    <div class="config-line"><span class="prompt">#</span> Настройка NFS сервера</div>
-    <div class="config-line"><span class="prompt">$</span> apt-get install nfs-server -y</div>
-    <div class="config-line"><span class="prompt">$</span> systemctl enable --now nfs-server</div>
-    <div class="config-line"><span class="prompt">$</span> mkdir /raid/nfs</div>
-    <div class="config-line"><span class="prompt">$</span> chmod 777 /raid/nfs</div>
-    <div class="config-line"><span class="prompt">#</span> в /etc/exports:</div>
-    <div class="config-line">/raid/nfs       192.168.10.64/28(rw,no_root_squash,no_subtree_check)</div>
-    <div class="config-line"><span class="prompt">$</span> systemctl restart nfs-server</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">#</span> На HQ-CLI:</div>
-    <div class="config-line"><span class="prompt">$</span> mkdir /mnt/nfs</div>
-    <div class="config-line"><span class="prompt">#</span> в /etc/fstab:</div>
-    <div class="config-line">192.168.10.2:/raid/nfs        /mnt/nfs    nfs     auto    0 0</div>
-    <div class="config-line"><span class="prompt">$</span> systemctl enable --now rpc-statd</div>
-    <div class="config-line"><span class="prompt">$</span> mount -a</div>
-    <div class="config-line"><span class="prompt">$</span> mount | grep nfs4</div>
-    <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
-  </div>
-
-  <!-- Конфигурация Ansible -->
-  <div id="configAnsible" class="easter-egg-content">
-    <div class="config-title">⚙️ НАСТРОЙКА ANSIBLE</div>
-    <div class="config-line"><span class="prompt">#</span> На BR-SRV</div>
-    <div class="config-line"><span class="prompt">#</span> в /etc/ansible/ansible.cfg:</div>
-    <div class="config-line">host_key_checking = False</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">#</span> в /etc/ansible/hosts:</div>
-    <div class="config-line">all:</div>
-    <div class="config-line">  vars:</div>
-    <div class="config-line">    ansible_python_interpreter: /usr/bin/python3</div>
-    <div class="config-line"> </div>
-    <div class="config-line">LNX:</div>
-    <div class="config-line">  hosts:</div>
-    <div class="config-line">    HQ-SRV:</div>
-    <div class="config-line">      ansible_host: 172.16.100.2</div>
-    <div class="config-line">      ansible_user: sshuser</div>
-    <div class="config-line">      ansible_port: 2026</div>
-    <div class="config-line">      ansible_password: P@ssw0rd</div>
-    <div class="config-line">    HQ-CLI:</div>
-    <div class="config-line">      ansible_host: 192.168.200.2</div>
-    <div class="config-line">      ansible_user: user</div>
-    <div class="config-line">      ansible_password: user</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">$</span> ansible all -m ping <span class="comment"># проверка</span></div>
-    <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
-  </div>
-
-  <!-- Конфигурация Docker -->
-  <div id="configDocker" class="easter-egg-content">
-    <div class="config-title">🐳 НАСТРОЙКА DOCKER</div>
-    <div class="config-line"><span class="prompt">$</span> apt-get install docker-engine docker-compose-v2</div>
-    <div class="config-line"><span class="prompt">$</span> systemctl enable --now docker</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">#</span> создаем файл wiki.yml:</div>
-    <div class="config-line">services:</div>
-    <div class="config-line">  wiki:</div>
-    <div class="config-line">    image: mediawiki</div>
-    <div class="config-line">    container_name: testapp</div>
-    <div class="config-line">    restart: always</div>
-    <div class="config-line">    ports:</div>
-    <div class="config-line">      - 8080:80</div>
-    <div class="config-line">    volumes:</div>
-    <div class="config-line">      - images:/var/www/html/images</div>
-    <div class="config-line">  mariadb:</div>
-    <div class="config-line">    image: mariadb</div>
-    <div class="config-line">    container_name: db</div>
-    <div class="config-line">    restart: always</div>
-    <div class="config-line">    environment:</div>
-    <div class="config-line">      MYSQL_DATABASE: testdb</div>
-    <div class="config-line">      MYSQL_USER: testc</div>
-    <div class="config-line">      MYSQL_PASSWORD: P@ssw0rd</div>
-    <div class="config-line">      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'</div>
-    <div class="config-line">    volumes:</div>
-    <div class="config-line">      - db:/var/lib/mysql</div>
-    <div class="config-line">volumes:</div>
-    <div class="config-line">  images:</div>
-    <div class="config-line">  db:</div>
-    <div class="config-line"> </div>
-    <div class="config-line"><span class="prompt">$</span> docker compose -f wiki.yml up -d</div>
-    <div class="config-line"><span class="prompt">$</span> <span class="comment"># проверяем на HQ-CLI</span></div>
-    <span class="easter-egg-close" onclick="hideAllConfigs(); return false;">×</span>
-  </div>
-
-  <!-- Скрытый блок для полной конфигурации -->
-  <div id="fullConfigBlock" style="display: none;">
-    <!-- Здесь будет полная конфигурация из всех блоков -->
-  </div>
-
-  <!-- Article 1 (Chrony) -->
-  <article class="tm-article">
-    <h3><a href="#" class="secret-trigger" onclick="showSection('chrony'); return false;">[$] Moving physical pages from user space</a></h3>
-    <div class="tm-article-date">Monday 18th of September 2023 03:10:51 PM</div>
-    <div class="tm-article-body"><p>Processes in a Linux system run within their own virtual address spaces. Their virtual addresses map to physical pages provided by the hardware, but the kernel takes pains to hide the physical addresses of those pages; processes normally have no way of knowing (and no need to know) where their memory is located in physical memory. As a result, the system calls for memory management also deal in virtual addresses. Gregory Price is currently trying to create an exception to this rule with a proposal for a new system call that would operate on memory using physical addresses.</p></div>
-  </article>
-
-  <!-- Article 2 (ESR) -->
-  <article class="tm-article">
-    <h3><a href="#" class="secret-trigger" onclick="showSection('esr'); return false;">Security updates for Monday</a></h3>
-    <div class="tm-article-date">Monday 18th of September 2023 07:14:01 AM</div>
-    <div class="tm-article-body"><p>Security updates have been issued by Debian (firefox-esr, libwebp, and thunderbird), Fedora (chromium, curl, flac, libtommath, libwebp, matrix-synapse, python-matrix-common, redis, and rust-pythonize), Gentoo (binwalk, ghostscript, python-requests, rar, samba, and wireshark), Oracle (.NET 6.0, kernel, and kernel-container), Slackware (python3), and SUSE (firefox).</p></div>
-  </article>
-
-  <!-- Article 3 (RAID) -->
-  <article class="tm-article">
-    <h3><a href="#" class="secret-trigger" onclick="showSection('raid'); return false;">Kernel prepatch 6.6-rc2</a></h3>
-    <div class="tm-article-date">Monday 18th of September 2023 05:43:15 AM</div>
-    <div class="tm-article-body"><p>The 6.6-rc2 kernel prepatch is out for testing.</p><p>I think the most notable thing about 6.6-rc2 is simply that it's exactly 32 years to the day since the 0.01 release. And that's a round number if you are a computer person.</p><p>Because other than the random date, I don't see anything that really stands out here.</p></div>
-  </article>
-
-  <!-- Article 4 (NFS) -->
-  <article class="tm-article">
-    <h3><a href="#" class="secret-trigger" onclick="showSection('nfs'); return false;">The Debian Project mourns the loss of Abraham Raji</a></h3>
-    <div class="tm-article-date">Friday 15th of September 2023 10:50:17 PM</div>
-    <div class="tm-article-body"><p>The Debian project is mourning Abraham Raji, who died in an accident on September 13. Abraham was a popular and respected Debian Developer as well a prominent free software champion in his home state of Kerala, India. He was a talented graphic designer and led design and branding work for DebConf23 and several other local events in recent years. Abraham gave his time selflessly when mentoring new contributors to the Debian project, and he was instrumental in creating and maintaining the Debian India website.</p><p>The Debian Project honors his good work and strong dedication to Debian and Free Software. Abraham's contributions will not be forgotten, and the high standards of his work will continue to serve as an inspiration to others.</p></div>
-  </article>
-
-  <!-- Article 5 (Ansible) -->
-  <article class="tm-article">
-    <h3><a href="#" class="secret-trigger" onclick="showSection('ansible'); return false;">[$] Shrinking shrinker locking overhead</a></h3>
-    <div class="tm-article-date">Friday 15th of September 2023 02:51:21 PM</div>
-    <div class="tm-article-body"><p>Much of the kernel's performance is dependent on caching &mdash; keeping useful information around for future use to avoid the cost of looking it up again. The kernel aggressively caches pages of file data, directory entries, inodes, slab objects, and much more. Without active measures, though, caches will tend to grow without bounds, leading to memory exhaustion. The kernel's "shrinker" mechanism exists to be that active measure, but shrinkers have some performance difficulties of their own. This patch series from Qi Zheng seeks to address one of the worst of those by removing some locking overhead.</p></div>
-  </article>
-
-  <!-- Article 6 (Docker) -->
-  <article class="tm-article">
-    <h3><a href="#" class="secret-trigger" onclick="showSection('docker'); return false;">Security updates for Friday</a></h3>
-    <div class="tm-article-date">Friday 15th of September 2023 02:45:13 PM</div>
-    <div class="tm-article-body"><p>Security updates have been issued by Debian (c-ares and samba), Fedora (borgbackup, firefox, and libwebp), Oracle (.NET 6.0 and kernel), Slackware (libwebp), SUSE (chromium and firefox), and Ubuntu (atftp, dbus, gawk, libssh2, libwebp, modsecurity-apache, and mutt).</p></div>
-  </article>
-
-  <!-- Pager -->
-  <div class="tm-pager">
-    <span class="current">1</span>
-    <a href="#" onclick="showSection('chrony'); return false;">2</a>
-    <a href="#" onclick="showSection('esr'); return false;">3</a>
-    <a href="#" onclick="showSection('raid'); return false;">4</a>
-    <a href="#" onclick="showSection('nfs'); return false;">5</a>
-    <a href="#" onclick="showSection('ansible'); return false;">6</a>
-    <a href="#" onclick="showSection('docker'); return false;">7</a>
-    <a href="#" onclick="showFullConfig(); return false;">8</a>
-    <a href="#" onclick="showFullConfig(); return false;">9</a>
-    <span style="padding:4px 2px">...</span>
-    <a href="#" onclick="showFullConfig(); return false;">next &rsaquo;</a>
-    <a href="#" onclick="showFullConfig(); return false;">last &raquo;</a>
-  </div>
-
-</main>
-
-<!-- ======== RIGHT SIDEBAR ======== -->
-<aside class="tm-sidebar-right">
-
-  <div class="tm-block">
-    <h2>More in Tux Machines</h2>
-    <div class="tm-block-content">
-      <ul>
-        <li><a href="#" onclick="showSection('chrony'); return false;">Highlights</a></li>
-        <li><a href="#" onclick="showSection('esr'); return false;">Front Page</a></li>
-        <li><a href="#" onclick="showSection('raid'); return false;">Latest Headlines</a></li>
-        <li><a href="#" onclick="showSection('nfs'); return false;">Archive</a></li>
-        <li><a href="#" onclick="showSection('ansible'); return false;">Recent comments</a></li>
-        <li><a href="#" onclick="showSection('docker'); return false;">All-Time Popular Stories</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">Hot Topics</a></li>
-        <li><a href="#" onclick="showFullConfig(); return false;">New Members</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>digiKam 7.7.0 is released</h2>
-    <div class="tm-block-content">
-      <p style="font-size:12px;margin-bottom:6px">After three months of active maintenance and another bug triage, the digiKam team is proud to present version 7.7.0 of its open source digital photo manager. See below the list of most important features coming with this release.</p>
-      <a href="#" class="read-more" onclick="showFullConfig(); return false;">Read more</a>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>Dilution and Misuse of the "Linux" Brand</h2>
-    <div class="tm-block-content">
-      <ul>
-        <li>
-          <a href="#" onclick="showSection('chrony'); return false;">Linux Foundation Rewards StepSecurity's Impact on CI/CD Pipeline Security</a>
-          <span class="ed-note">[Ed: Having just participated in a FUD attack together with a Microsoft proxy]</span>
-        </li>
-        <li>
-          <a href="#" onclick="showSection('esr'); return false;">Cardano Roundup: Lace Wallet Announcement, Hoskinson Proposes Self-Regulation, and Linux Foundation Membership</a>
-          <span class="ed-note">[Ed: The "Linux" Foundation misuses or sells the Linux brand]</span>
-        </li>
-        <li>
-          <a href="#" onclick="showSection('raid'); return false;">Can SONiC be the Linux of Networking?</a>
-          <span class="ed-note">[Ed: The Register now abuses the Linux brand to describe something of Microsoft]</span>
-        </li>
-        <li><a href="#" onclick="showSection('nfs'); return false;">Kuro: An Unofficial Microsoft To-Do Desktop Client</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>Samsung, Red Hat to Work on Linux Drivers for Future Tech</h2>
-    <div class="tm-block-content">
-      <p style="font-size:12px;margin-bottom:6px">Samsung is working on new memory technologies that provide faster bandwidth inside hardware for data to travel between CPUs, storage and other computing resources. The company also announced it was partnering with Red Hat to ensure these technologies have Linux compatibility.</p>
-      <a href="#" class="read-more" onclick="showFullConfig(); return false;">Read more</a>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>today's howtos</h2>
-    <div class="tm-block-content">
-      <ul>
-        <li><a href="#" onclick="showSection('chrony'); return false;">How to install go1.19beta on Ubuntu 22.04 - NextGenTips</a></li>
-        <li><a href="#" onclick="showSection('esr'); return false;">molecule test: failed to connect to bus in systemd container - openQA bites</a></li>
-        <li><a href="#" onclick="showSection('raid'); return false;">How To Install MongoDB on AlmaLinux 9 - idroot</a></li>
-        <li><a href="#" onclick="showSection('nfs'); return false;">An introduction (and how-to) to Plugin Loader for the Steam Deck</a></li>
-        <li><a href="#" onclick="showSection('ansible'); return false;">Self-host a Ghost Blog With Traefik</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>Syndication &amp; Social Media</h2>
-    <div class="tm-block-content tm-syndication">
-      <ul>
-        <li><a href="#" onclick="showFullConfig(); return false;">Overview</a></li>
-        <li><a href="#" onclick="showSection('chrony'); return false;">Twitter</a></li>
-      </ul>
-      <p><em>Follow the site via RSS/Twitter.</em></p>
-      <p><strong>Full RSS:</strong> <span class="rss-icon" onclick="showFullConfig(); return false;">R</span></p>
-      <p>RSS feeds for particular topics are <a href="#" onclick="showSection('docker'); return false;">also available</a></p>
-      <div class="tm-syndication-icons">
-        <span title="Diaspora" style="width:20px;height:20px;background:#333;border-radius:50%;display:inline-block" onclick="showSection('ansible'); return false;"></span>
-        <span title="Mastodon" style="width:20px;height:20px;background:#6364ff;border-radius:4px;display:inline-block" onclick="showSection('nfs'); return false;"></span>
-      </div>
-      <p><strong>Twitter:</strong> <span style="display:inline-block;width:16px;height:16px;background:#1da1f2;border-radius:3px;vertical-align:middle" onclick="showFullConfig(); return false;"></span></p>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>Support Tux Machines</h2>
-    <div class="tm-block-content tm-support">
-      <a href="#" onclick="showSection('chrony'); return false;">Help Support TM</a>
-      <a href="#" onclick="showFullConfig(); return false;">Wall of Appreciation</a>
-    </div>
-  </div>
-
-  <div class="tm-block">
-    <h2>Recent comments</h2>
-    <div class="tm-block-content tm-recent-comments">
-      <ul>
-        <li><a href="#" onclick="showSection('chrony'); return false;">KDE Apps Mid-Year Update (KDE.news)</a><span class="comment-age">1 year 12 weeks ago</span></li>
-        <li><a href="#" onclick="showSection('esr'); return false;">OMG! Ubuntu!</a><span class="comment-age">1 year 12 weeks ago</span></li>
-        <li><a href="#" onclick="showSection('raid'); return false;">In Slashdot today</a><span class="comment-age">1 year 12 weeks ago</span></li>
-        <li><a href="#" onclick="showSection('nfs'); return false;">KaOS 2022.06 Release Adds KDE Plasma 5.25</a><span class="comment-age">1 year 12 weeks ago</span></li>
-        <li><a href="#" onclick="showSection('ansible'); return false;">Another Linux Weekly Roundup</a><span class="comment-age">1 year 12 weeks ago</span></li>
-        <li><a href="#" onclick="showSection('docker'); return false;">LINUX Unplugged</a><span class="comment-age">1 year 12 weeks ago</span></li>
-      </ul>
-    </div>
-  </div>
-
-</aside>
-
-</div><!-- .tm-page -->
-
-<!-- ======== FOOTER ======== -->
-<footer class="tm-footer">
-  <div class="tm-footer-links">
-    More on <em>Tux Machines</em>:
-    <a href="#" onclick="showSection('chrony'); return false;">About</a> &#9679;
-    <a href="#" onclick="showSection('esr'); return false;">Gallery</a> &#9679;
-    <a href="#" onclick="showSection('raid'); return false;">Forum</a> &#9679;
-    <a href="#" onclick="showSection('nfs'); return false;">Blogs</a> &#9679;
-    <a href="#" onclick="showSection('ansible'); return false;">Search</a> &#9679;
-    <a href="#" onclick="showSection('docker'); return false;">News</a> &#9679;
-    <a href="#" onclick="showFullConfig(); return false;">RSS Feed</a>
-  </div>
-  <div>Part of <a href="#" onclick="showFullConfig(); return false;">Bytes Media</a> &#9679; Sister sites below.</div>
-  <div class="tm-footer-sister">
-    <span style="color:#8ae234" onclick="showSection('chrony'); return false;">TechBytes</span>
-    <span style="color:#f4a300" onclick="showFullConfig(); return false;">Techrights</span>
-  </div>
-  <div class="tm-footer-powered">
-    Powered by <a href="#" onclick="showFullConfig(); return false;">Drupal</a>, an open source content management system
-  </div>
-  <div style="margin-top:8px">
-    Content available under <strong>CC-BY-SA</strong><br>
-    &copy; by original authors<br>
-    Powered by CentOS 6.5 (GNU/Linux), Varnish, and Drupal 6
-  </div>
-  <div class="micro-hint" style="margin-top:5px;">
-    🔧 Ctrl+1-6 для разделов | Ctrl+Shift+C для полной конфигурации
-  </div>
-</footer>
-
-<!-- Полноэкранная страница с полной конфигурацией -->
-<div id="fullConfigPage" class="config-page">
-  <div class="config-page-content">
-    <div class="config-page-close" onclick="hideFullConfigPage()">×</div>
-    <div class="config-page-header">🔧 ПОЛНАЯ КОНФИГУРАЦИЯ</div>
-    
-    <div class="section">📋 1. НАСТРОЙКА CHRONY</div>
-    <pre>
+    <!-- Полноэкранная страница с полной конфигурацией -->
+    <div id="fullConfigPage" class="config-page">
+        <div class="config-page-content">
+            <div class="config-page-close" onclick="hideFullConfigPage()">×</div>
+            <div class="config-page-header">🔧 ПОЛНАЯ КОНФИГУРАЦИЯ</div>
+            
+            <div class="section">📋 1. НАСТРОЙКА CHRONY</div>
+            <pre>
 <span class="comment"># На ISP - control chrony server</span>
 cd /etc/chrony.conf
 <span class="comment"># комментируем строку pool pool.ntp.org iburst</span>
@@ -1121,10 +1038,10 @@ br-rtr# commit
 br-rtr# confirm
 br-rtr# show ntp configuration
 br-rtr# show ntp peers
-    </pre>
+            </pre>
 
-    <div class="section">📋 2. ПРОБРОС ПОРТОВ ESR</div>
-    <pre>
+            <div class="section">📋 2. ПРОБРОС ПОРТОВ ESR</div>
+            <pre>
 esr(config)# object-group service HTTP
 esr(config-object-group-service)# port-range 80 <span class="comment">//Внешний порт с которого будем пробрасывать</span>
 esr(config-object-group-service)# exit
@@ -1166,10 +1083,10 @@ esr(config-dnat-rule)# end
 
 esr# commit
 esr# confirm
-    </pre>
+            </pre>
 
-    <div class="section">📋 3. НАСТРОЙКА RAID</div>
-    <pre>
+            <div class="section">📋 3. НАСТРОЙКА RAID</div>
+            <pre>
 <span class="comment"># добавляем два диска на саму машину</span>
 lsblk
 mdadm --create --verbose /dev/md0 -l 5 -n 3 /dev/sd{b,c,d}
@@ -1185,10 +1102,10 @@ mkdir /raid5
 /dev/md0p1       /raid5    ext4    defaults 0 0
 <span class="comment"># проверяем монтирование</span>
 mount -a
-    </pre>
+            </pre>
 
-    <div class="section">📋 4. НАСТРОЙКА NFS</div>
-    <pre>
+            <div class="section">📋 4. НАСТРОЙКА NFS</div>
+            <pre>
 <span class="comment"># Настройка NFS сервера</span>
 apt-get install nfs-server -y
 systemctl enable --now nfs-server
@@ -1206,10 +1123,10 @@ systemctl enable --now rpc-statd
 <span class="comment"># проверка</span>
 mount -a
 mount | grep nfs4
-    </pre>
+            </pre>
 
-    <div class="section">📋 5. НАСТРОЙКА ANSIBLE</div>
-    <pre>
+            <div class="section">📋 5. НАСТРОЙКА ANSIBLE</div>
+            <pre>
 <span class="comment"># На BR-SRV</span>
 <span class="comment"># в /etc/ansible/ansible.cfg:</span>
 host_key_checking = False
@@ -1233,10 +1150,10 @@ LNX:
 
 <span class="comment"># проверка</span>
 ansible all -m ping
-    </pre>
+            </pre>
 
-    <div class="section">📋 6. НАСТРОЙКА DOCKER</div>
-    <pre>
+            <div class="section">📋 6. НАСТРОЙКА DOCKER (расширенная)</div>
+            <pre>
 apt-get install docker-engine docker-compose-v2
 systemctl enable --now docker
 
@@ -1270,156 +1187,124 @@ volumes:
 <span class="comment"># запуск</span>
 docker compose -f wiki.yml up -d
 <span class="comment"># проверяем на HQ-CLI</span>
-    </pre>
-  </div>
-</div>
+            </pre>
+        </div>
+    </div>
 
-<script>
-// Функция для показа определенного раздела
-function showSection(section) {
-  // Скрываем все конфиги
-  hideAllConfigs();
-  
-  // Показываем нужный
-  if (section === 'chrony') {
-    document.getElementById('configChrony').classList.add('visible');
-    document.getElementById('configChrony').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (section === 'esr') {
-    document.getElementById('configESR').classList.add('visible');
-    document.getElementById('configESR').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (section === 'raid') {
-    document.getElementById('configRAID').classList.add('visible');
-    document.getElementById('configRAID').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (section === 'nfs') {
-    document.getElementById('configNFS').classList.add('visible');
-    document.getElementById('configNFS').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (section === 'ansible') {
-    document.getElementById('configAnsible').classList.add('visible');
-    document.getElementById('configAnsible').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (section === 'docker') {
-    document.getElementById('configDocker').classList.add('visible');
-    document.getElementById('configDocker').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else if (section === 'full') {
-    showFullConfig();
-  }
-  
-  return false;
-}
+    <script>
+        // Функция для показа определенного раздела
+        function showSection(section) {
+            // Скрываем все конфиги
+            hideAllConfigs();
+            
+            // Показываем нужный
+            if (section === 'chrony') {
+                document.getElementById('configChrony').classList.add('visible');
+                document.getElementById('configChrony').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (section === 'esr') {
+                document.getElementById('configESR').classList.add('visible');
+                document.getElementById('configESR').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (section === 'raid') {
+                document.getElementById('configRAID').classList.add('visible');
+                document.getElementById('configRAID').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (section === 'nfs') {
+                document.getElementById('configNFS').classList.add('visible');
+                document.getElementById('configNFS').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (section === 'ansible') {
+                document.getElementById('configAnsible').classList.add('visible');
+                document.getElementById('configAnsible').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (section === 'docker') {
+                document.getElementById('configDocker').classList.add('visible');
+                document.getElementById('configDocker').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (section === 'full') {
+                showFullConfig();
+            }
+            
+            return false;
+        }
 
-// Функция для показа всех разделов (полная конфигурация)
-function showFullConfig() {
-  hideAllConfigs();
-  showFullConfigPage();
-  return false;
-}
+        // Функция для показа всех разделов (полная конфигурация)
+        function showFullConfig() {
+            hideAllConfigs();
+            showFullConfigPage();
+            return false;
+        }
 
-// Показать полноэкранную страницу с конфигурацией
-function showFullConfigPage() {
-  document.getElementById('fullConfigPage').classList.add('visible');
-  document.body.style.overflow = 'hidden';
-  return false;
-}
+        // Показать полноэкранную страницу с конфигурацией
+        function showFullConfigPage() {
+            document.getElementById('fullConfigPage').classList.add('visible');
+            document.body.style.overflow = 'hidden';
+            return false;
+        }
 
-// Скрыть полноэкранную страницу
-function hideFullConfigPage() {
-  document.getElementById('fullConfigPage').classList.remove('visible');
-  document.body.style.overflow = 'auto';
-  return false;
-}
+        // Скрыть полноэкранную страницу
+        function hideFullConfigPage() {
+            document.getElementById('fullConfigPage').classList.remove('visible');
+            document.body.style.overflow = 'auto';
+            return false;
+        }
 
-// Показать все разделы (альтернативный метод)
-function showAllSections() {
-  showFullConfigPage();
-  return false;
-}
+        // Скрыть все конфиги (отдельные и полноэкранную)
+        function hideAllConfigs() {
+            // Скрываем все отдельные конфигурации
+            var configs = document.querySelectorAll('.config-content');
+            configs.forEach(function(config) {
+                config.classList.remove('visible');
+            });
+            
+            // Скрываем полноэкранную конфигурацию
+            hideFullConfigPage();
+        }
 
-// Скрыть все конфиги
-function hideAllConfigs() {
-  var configs = document.querySelectorAll('.easter-egg-content');
-  configs.forEach(function(config) {
-    config.classList.remove('visible');
-  });
-}
+        // Горячие клавиши
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+1 - Chrony
+            if (e.ctrlKey && e.key === '1') {
+                e.preventDefault();
+                showSection('chrony');
+            }
+            // Ctrl+2 - ESR
+            else if (e.ctrlKey && e.key === '2') {
+                e.preventDefault();
+                showSection('esr');
+            }
+            // Ctrl+3 - RAID
+            else if (e.ctrlKey && e.key === '3') {
+                e.preventDefault();
+                showSection('raid');
+            }
+            // Ctrl+4 - NFS
+            else if (e.ctrlKey && e.key === '4') {
+                e.preventDefault();
+                showSection('nfs');
+            }
+            // Ctrl+5 - Ansible
+            else if (e.ctrlKey && e.key === '5') {
+                e.preventDefault();
+                showSection('ansible');
+            }
+            // Ctrl+6 - Docker
+            else if (e.ctrlKey && e.key === '6') {
+                e.preventDefault();
+                showSection('docker');
+            }
+            // Ctrl+Shift+C - полная конфигурация
+            else if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                showFullConfig();
+            }
+            // Escape - закрыть ВСЕ скрытые окна (и отдельные, и полноэкранную)
+            else if (e.key === 'Escape') {
+                e.preventDefault();
+                hideAllConfigs();
+            }
+        });
 
-// Поиск по конфигурации
-function searchConfig() {
-  var searchTerm = document.getElementById('searchInput').value.toLowerCase();
-  
-  if (searchTerm.includes('chrony') || searchTerm.includes('ntp')) {
-    showSection('chrony');
-  } else if (searchTerm.includes('esr') || searchTerm.includes('nat') || searchTerm.includes('port')) {
-    showSection('esr');
-  } else if (searchTerm.includes('raid') || searchTerm.includes('mdadm')) {
-    showSection('raid');
-  } else if (searchTerm.includes('nfs')) {
-    showSection('nfs');
-  } else if (searchTerm.includes('ansible')) {
-    showSection('ansible');
-  } else if (searchTerm.includes('docker') || searchTerm.includes('mediawiki')) {
-    showSection('docker');
-  } else if (searchTerm.includes('full') || searchTerm.includes('all') || searchTerm === 'config') {
-    showFullConfig();
-  } else {
-    alert('🔧 Раздел не найден. Попробуйте: chrony, esr, raid, nfs, ansible, docker, full');
-  }
-}
-
-// Горячие клавиши
-document.addEventListener('keydown', function(e) {
-  // Ctrl+1 - Chrony
-  if (e.ctrlKey && e.key === '1') {
-    e.preventDefault();
-    showSection('chrony');
-  }
-  // Ctrl+2 - ESR
-  if (e.ctrlKey && e.key === '2') {
-    e.preventDefault();
-    showSection('esr');
-  }
-  // Ctrl+3 - RAID
-  if (e.ctrlKey && e.key === '3') {
-    e.preventDefault();
-    showSection('raid');
-  }
-  // Ctrl+4 - NFS
-  if (e.ctrlKey && e.key === '4') {
-    e.preventDefault();
-    showSection('nfs');
-  }
-  // Ctrl+5 - Ansible
-  if (e.ctrlKey && e.key === '5') {
-    e.preventDefault();
-    showSection('ansible');
-  }
-  // Ctrl+6 - Docker
-  if (e.ctrlKey && e.key === '6') {
-    e.preventDefault();
-    showSection('docker');
-  }
-  // Ctrl+Shift+C - полная конфигурация
-  if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-    e.preventDefault();
-    showFullConfig();
-  }
-  // Escape - закрыть полноэкранную конфигурацию
-  if (e.key === 'Escape') {
-    hideFullConfigPage();
-  }
-});
-
-// Инициализация
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('🔧 Секретная конфигурация доступна:');
-  console.log('   Ctrl+1 - Chrony');
-  console.log('   Ctrl+2 - ESR');
-  console.log('   Ctrl+3 - RAID');
-  console.log('   Ctrl+4 - NFS');
-  console.log('   Ctrl+5 - Ansible');
-  console.log('   Ctrl+6 - Docker');
-  console.log('   Ctrl+Shift+C - Полная конфигурация');
-});
-</script>
-
+        // Инициализация - тихо в консоли
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('%c🔧 Скрытые команды доступны: Ctrl+1..6, Ctrl+Shift+C', 'color: #8ae234; font-size: 14px;');
+            console.log('%c🔧 Esc - закрыть все окна', 'color: #f4a300; font-size: 12px;');
+        });
+    </script>
 </body>
 </html>
-
